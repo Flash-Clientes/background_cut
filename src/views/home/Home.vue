@@ -12,12 +12,12 @@
             
             <!-- Título -->
             <n-typography>
-                <n-h1>Bem vindo à Flash Automação Criativa</n-h1>
+                <n-h1 class="title-text">Bem vindo à Flash Automação Criativa</n-h1>
             </n-typography>
             
             <!-- Descrição -->
             <n-typography>
-                <n-text>
+                <n-text class="description-text">
                     Remova o fundo de suas imagens de forma fácil e rápida. Basta fazer o upload da sua imagem abaixo.
                 </n-text>
             </n-typography>
@@ -42,11 +42,9 @@
                     width="400"
                 />
     
-                <n-typography>
-                    <n-text class="uploader-text">
-                        {{ resultImage ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar o BackgroundCut.' }}
-                    </n-text>
-                </n-typography>
+                <n-text class="uploader-text">
+                    {{ resultImage ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar o BackgroundCut.' }}
+                </n-text>
             </n-space>
         </n-spin>
     </n-space>
@@ -149,13 +147,25 @@ const handleUploadChange = async (file) => {
 }
 
 .result-content {
-    flex-flow: column;
+    flex-direction: column;
     margin-top: 20px;
 }
 
 .logo {
     margin-bottom: 20px;
     background-color: transparent;
+}
+
+.title-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+.description-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
 }
 
 .uploader-container {
@@ -183,5 +193,32 @@ const handleUploadChange = async (file) => {
     font-size: 16px;
     font-weight: bold;
     color: #333;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-flow: column !important;
+    }
+
+    .interation-content {
+        width: 100%;
+    }
+
+    .result-content {
+        margin-top: 20px;
+        padding: 0 20px;
+        flex-direction: column-reverse
+    }
+
+    .n-image {
+        width: 70% !important;
+        height: 70% !important;
+    }
+
+    .uploader-text {
+        position: absolute;
+        bottom: 30px;
+        left: 25px;
+    }
 }
 </style>
