@@ -1,0 +1,21 @@
+.button-file {
+    position: relative;
+    overflow: hidden;
+    max-width: 250px;
+    width: 100%;
+    background: #e5e5e5 !important;
+    padding: 10px;
+    font-weight: 500;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-file input {
+    position: absolute;
+    background: pink;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+}
