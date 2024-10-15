@@ -29,6 +29,7 @@
                     :directory-dnd="true"
                     :show-upload-list="false"
                     @change="handleUploadChange"
+                    accept="image/*"
                 >
                     <n-upload-dragger v-if="!previewImageUrlRef">
                         <div>
