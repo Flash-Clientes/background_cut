@@ -71,7 +71,7 @@
                 />
     
                 <n-text class="uploader-text">
-                    {{ resultImageUrlRef ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar o BackgroundCut.' }}
+                    {{ resultImageUrlRef ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar a aplicação.' }}
                 </n-text>
             </n-space>
         </n-spin>
@@ -110,21 +110,8 @@ const handleUploadChange = async ({ fileList }) => {
         return;
     }
 
-    const formData = new FormData();
-    formData.append('file', fileList[0].file);
-    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-    formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
-
-    const { data: cloudUrl } = await axios.post(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`, 
-        formData, 
-        {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        }
-    );
-    
     isLoading.value = true;
-    previewImageUrlRef.value = cloudUrl.secure_url;
+    previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);;
 
     try {
         const { public_url } = await axios.post('https://southamerica-east1-zinc-iterator-358122.cloudfunctions.net/remove-image-bg', {
@@ -132,7 +119,6 @@ const handleUploadChange = async ({ fileList }) => {
         }, {
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
             }
         });
 
@@ -155,6 +141,23 @@ const handleUploadChange = async ({ fileList }) => {
         isLoading.value = false;
     }
 };
+
+const uploadImageToCloudinary = async (fileItem) => {
+    const formData = new FormData();
+    formData.append('file', fileItem);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+
+    const { data: cloudUrl } = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`, 
+        formData, 
+        {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        }
+    );
+
+    return cloudUrl.secure_url;
+}
 </script>
 
 <style scoped>
