@@ -129,6 +129,7 @@ const handleUploadChange = async ({ fileList }) => {
         }, {
             timeout: 2000,
         });
+        
 
         if (response && response.data) {
             resultImageUrlRef.value = response.data.output_image_url;
