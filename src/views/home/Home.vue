@@ -90,6 +90,7 @@ const resultImageUrlRef = ref('');
 const handleUploadChange = async ({ fileList }) => {
     if (!fileList.length) {
         previewImageUrlRef.value = '';
+        
         return;
     } else if (!fileList[0]?.file) {
         previewImageUrlRef.value = '';
