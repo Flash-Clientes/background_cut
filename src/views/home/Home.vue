@@ -22,14 +22,42 @@
                 </n-text>
             </n-typography>
             
-            <!-- Input de Drag and Drop para Upload -->
-            
+            <!-- Input de Drag and Drop para Upload -->          
             <n-space class="uploader-container">
-                <InputFilePond 
-                    label="Clique ou arraste a imagem aqui"
-                    :Cloudinary="{ cloudname: 'prime-arte', uploadpreset: 'santander', api_key: '429282383232114' }"
+                <n-upload
+                    :multiple="false"
+                    :show-upload-list="false"
+                    :accept="['image/*']"
                     @change="handleUploadChange"
-                ></InputFilePond>
+                >
+                    <n-upload-dragger v-if="!previewImageUrlRef">
+                        <div>
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                width="30px" 
+                                height="30px" 
+                                viewBox="0 0 24 24"
+                            >
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                                    <path stroke-linejoin="round" d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594" />
+                                    <path stroke-miterlimit="10" d="M12 12v5"/>
+                                    <path stroke-linejoin="round" d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"/>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <n-text style="font-size: 16px">
+                            Clique ou arraste e solte a imagem aqui para fazer o upload.
+                        </n-text>
+                    </n-upload-dragger>
+                    <n-card
+                        v-else
+                        class="uploaded-image"
+                    >
+                        <img :src="previewImageUrlRef" alt="Imagem sem fundo" style="width: 100%">
+                    </n-card>
+                </n-upload>
+                
             </n-space>
         </n-space>
 
@@ -37,13 +65,13 @@
         <n-spin :show="isLoading">
             <n-space class="result-content">
                 <n-image
-                    :src="resultImage || 'https://picsum.photos/600/600'"
+                    :src="resultImageUrlRef || 'https://picsum.photos/600/600'"
                     alt="Imagem sem fundo"
                     width="400"
                 />
     
                 <n-text class="uploader-text">
-                    {{ resultImage ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar o BackgroundCut.' }}
+                    {{ resultImageUrlRef ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar o BackgroundCut.' }}
                 </n-text>
             </n-space>
         </n-spin>
@@ -55,15 +83,17 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { toast } from "vue3-toastify";
 
-import InputFilePond from './components/filepond/InputFilepond.vue';
-
 const isLoading = ref(false);
-const resultImage = ref(null);
+const previewImageUrlRef = ref('');
+const resultImageUrlRef = ref('');
 
-const handleUploadChange = async (file) => {
+const handleUploadChange = async ({ fileList }) => {
+    if (!fileList.length) {
+        previewImageUrlRef.value = '';
+        return;
+    } else if (!fileList[0]?.file) {
+        previewImageUrlRef.value = '';
 
-    const { secure_url } = file;
-    if (!secure_url) {
         toast('Erro ao carregar a imagem. Tente novamente.', {
             position: 'top-right',
             autoClose: 5000,
@@ -76,43 +106,40 @@ const handleUploadChange = async (file) => {
                 "--toastify-progress-bar-color-error": "#c60d31",
             },
         });
+        
+        return;
     }
-    
 
     const formData = new FormData();
-    formData.append('file_url', secure_url);
-    formData.append('max-resolution', 12000000);
-    formData.append('quality', 'medium');
-    formData.append('format', 'png');
+    formData.append('file', fileList[0].file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+
+    const { data: cloudUrl } = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`, 
+        formData, 
+        {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        }
+    );
+    
+    isLoading.value = true;
+    previewImageUrlRef.value = cloudUrl.secure_url;
 
     try {
-        isLoading.value = true;
-        
-        const response = await axios.post('https://backgroundcut.co/api/v1/cut/', formData, {
+        const { public_url } = await axios.post('https://southamerica-east1-zinc-iterator-358122.cloudfunctions.net/remove-image-bg', {
+            image_url: previewImageUrlRef.value,
+        }, {
             headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${import.meta.env.VITE_BACKGROUND_CUT_API_KEY}`
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
             }
         });
 
-        if (response && response.data) {
-            resultImage.value = response.data.output_image_url;
-
-            toast('Imagem processada com sucesso!', {
-                position: 'top-right',
-                autoClose: 5000,
-                type: 'success',
-                toastStyle: {
-                    "--toastify-icon-color-success": "#0f5132",
-                    "--toastify-color-success": "#0f5132",
-                },
-                progressStyle: {
-                    "--toastify-progress-bar-color-success": "#0f5132",
-                },
-            });
-        }
+        if (public_url) resultImageUrlRef.value = public_url;
     } catch (error) {
-        toast('Erro ao remover o fundo da imagem. Tente novamente.', {
+        console.error('Erro ao processar a imagem. Tente novamente.', error);
+        toast('Erro ao processar a imagem. Tente novamente.', {
             position: 'top-right',
             autoClose: 5000,
             type: 'error',
@@ -165,9 +192,8 @@ const handleUploadChange = async (file) => {
 
 .uploader-container {
     margin-top: 20px;
-    padding: 0 80px;
+    padding: 0;
     width: 100%;
-    height: 200px;
     border: 2px dashed #9688f2;
     border-radius: 4px;
     background-color: #fafafa;
@@ -181,7 +207,18 @@ const handleUploadChange = async (file) => {
 
 .uploader-container:hover {
     border-color: #9688f2;
-    background-color: #f5f5f5;
+    background-color: #f0f2f5;
+}
+
+.uploaded-image {
+    width: 70%;
+    height: auto;
+    background-color: transparent;
+    margin: 0 auto;
+}
+
+.n-upload-dragger {
+    border: none;
 }
 
 .uploader-text {
