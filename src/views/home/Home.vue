@@ -71,7 +71,7 @@
                 />
     
                 <n-text class="uploader-text">
-                    {{ resultImageUrlRef ? 'Imagem sem fundo gerada com sucesso!' : 'Imagem de exemplo para testar a aplicação.' }}
+                    {{ resultImageUrlRef ? '' : 'Imagem de exemplo para testar a aplicação.' }}
                 </n-text>
             </n-space>
         </n-spin>
@@ -112,18 +112,40 @@ const handleUploadChange = async ({ fileList }) => {
     }
 
     isLoading.value = true;
-    previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);;
+    previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);
+    
+    const formData = new FormData();
+    formData.append('file_url', previewImageUrlRef.value);
+    formData.append('max-resolution', 12000000);
+    formData.append('quality', 'medium');
+    formData.append('format', 'png');
 
     try {
-        const { public_url } = await axios.post('https://southamerica-east1-zinc-iterator-358122.cloudfunctions.net/remove-bg', {
-            image_url: previewImageUrlRef.value,
-        }, {
+        const response = await axios.post('https://backgroundcut.co/api/v1/cut/', formData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${import.meta.env.VITE_BACKGROUND_CUT_API_KEY}`,
             }
+        }, {
+            timeout: 2000,
         });
 
-        if (public_url) resultImageUrlRef.value = public_url;
+        if (response && response.data) {
+            resultImageUrlRef.value = response.data.output_image_url;
+
+            toast('Imagem sem fundo gerada com sucesso!', {
+                position: 'top-right',
+                autoClose: 5000,
+                type: 'success',
+                toastStyle: {
+                    "--toastify-icon-color-success": "#00a854",
+                    "--toastify-color-success": "#00a854",
+                },
+                progressStyle: {
+                    "--toastify-progress-bar-color-success": "#00a854",
+                },
+            });
+        }
     } catch (error) {
         console.error('Erro ao processar a imagem. Tente novamente.', error);
         toast('Erro ao processar a imagem. Tente novamente.', {
@@ -254,12 +276,6 @@ const uploadImageToCloudinary = async (fileItem) => {
     .n-image {
         width: 70% !important;
         height: 70% !important;
-    }
-
-    .uploader-text {
-        position: absolute;
-        bottom: 30px;
-        left: 25px;
     }
 }
 </style>
