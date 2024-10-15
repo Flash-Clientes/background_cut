@@ -90,7 +90,7 @@ const resultImageUrlRef = ref('');
 const handleUploadChange = async ({ fileList }) => {
     if (!fileList.length) {
         previewImageUrlRef.value = '';
-        
+
         return;
     } else if (!fileList[0]?.file) {
         previewImageUrlRef.value = '';
@@ -115,7 +115,7 @@ const handleUploadChange = async ({ fileList }) => {
     previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);;
 
     try {
-        const { public_url } = await axios.post('https://southamerica-east1-zinc-iterator-358122.cloudfunctions.net/remove-image-bg', {
+        const { public_url } = await axios.post('https://southamerica-east1-zinc-iterator-358122.cloudfunctions.net/remove-bg', {
             image_url: previewImageUrlRef.value,
         }, {
             headers: {
