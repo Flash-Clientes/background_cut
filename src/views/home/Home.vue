@@ -48,8 +48,6 @@
             </n-space>
         </n-spin>
     </n-space>
-
-    <n-divider />
 </template> 
 
 <script setup>
@@ -137,19 +135,16 @@ const handleUploadChange = async (file) => {
     flex-flow: nowrap !important;
     margin: 32px;
     padding: 16px;
-    background-color: #f0f2f5;
+    background-color: #ffffff;
 }
 
 .interation-content {
     flex-flow: column;
-    width: 50%;
+    justify-content: flex-start;
+    width: 90%;
     margin-right: 20px;
 }
 
-.result-content {
-    flex-direction: column;
-    margin-top: 20px;
-}
 
 .logo {
     margin-bottom: 20px;
@@ -159,13 +154,13 @@ const handleUploadChange = async (file) => {
 .title-text {
     font-size: 24px;
     font-weight: 700;
-    color: #333;
+    margin: 0;
 }
 
 .description-text {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
-    color: #333;
+    color: #666;
 }
 
 .uploader-container {
@@ -192,7 +187,12 @@ const handleUploadChange = async (file) => {
 .uploader-text {
     font-size: 16px;
     font-weight: bold;
-    color: #333;
+    color: #666;
+}
+
+.result-content {
+    flex-direction: column;
+    margin-top: 20px;
 }
 
 @media (max-width: 768px) {

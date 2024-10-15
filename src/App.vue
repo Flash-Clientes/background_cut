@@ -28,6 +28,15 @@ const themeOverrides = ref({
   font-family: 'Rubik', sans-serif;
 }
 
+body {
+  background-color: #f0f2f5;
+}
+
+.main {
+  max-width: 900px;
+  margin: 50px auto;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }
