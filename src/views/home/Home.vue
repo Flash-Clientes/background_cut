@@ -26,8 +26,8 @@
             <n-space class="uploader-container">
                 <n-upload
                     :multiple="false"
+                    :directory-dnd="true"
                     :show-upload-list="false"
-                    :accept="['image/*']"
                     @change="handleUploadChange"
                 >
                     <n-upload-dragger v-if="!previewImageUrlRef">
@@ -65,7 +65,7 @@
         <n-spin :show="isLoading">
             <n-space class="result-content">
                 <n-image
-                    :src="resultImageUrlRef || 'https://picsum.photos/600/600'"
+                    :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
                     alt="Imagem sem fundo"
                     width="400"
                 />
@@ -130,7 +130,6 @@ const handleUploadChange = async ({ fileList }) => {
             timeout: 2000,
         });
         
-
         if (response && response.data) {
             resultImageUrlRef.value = response.data.output_image_url;
 
