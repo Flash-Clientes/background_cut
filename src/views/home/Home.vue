@@ -113,6 +113,28 @@ const handleUploadChange = async ({ fileList }) => {
     }
 
     isLoading.value = true;
+
+    const fileSize = fileList[0].file.size / 1024 / 1024;
+    if (fileSize > 12) {
+        isLoading.value = false;
+        previewImageUrlRef.value = '';
+
+        toast('O tamanho da imagem não pode ser maior que 12MB.', {
+            position: 'top-right',
+            autoClose: 5000,
+            type: 'error',
+            toastStyle: {
+                "--toastify-icon-color-error": "#c60d31",
+                "--toastify-color-error": "#c60d31",
+            },
+            progressStyle: {
+                "--toastify-progress-bar-color-error": "#c60d31",
+            },
+        });
+
+        return;
+    }
+
     previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);
     
     const formData = new FormData();
