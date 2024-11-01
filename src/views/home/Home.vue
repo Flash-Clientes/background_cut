@@ -84,6 +84,9 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { toast } from "vue3-toastify";
 
+import useRegisterCustomization from './hooks/register-customization/useRegisterCustomization';
+const { registerCustomization } = useRegisterCustomization();
+
 const isLoading = ref(false);
 const previewImageUrlRef = ref('');
 const resultImageUrlRef = ref('');
@@ -168,6 +171,16 @@ const handleUploadChange = async ({ fileList }) => {
                     "--toastify-progress-bar-color-success": "#00a854",
                 },
             });
+
+            const customizationToRegister = {
+                'imagem_personalizada': resultImageUrlRef.value,
+                'imagem_usuario': previewImageUrlRef.value,
+                'campanha': 'Remoção de Fundo',
+                'whatsapp': '5511999999999',
+                'empresa_id': '0'
+            };
+
+            await registerCustomization(customizationToRegister);
         }
     } catch (error) {
         console.error('Erro ao processar a imagem. Tente novamente.', error);
