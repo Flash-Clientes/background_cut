@@ -21,10 +21,23 @@ const useListCustomizations = () => {
         try {
             const { data, error } = await supabase.from('personalizacoes').select('*');
             if (error) handleRequestError('fetchCustomizations', error);
-            fetchedCustomizations.value = data;
+            
+            const orderedCustomizations = orderCustomizationsByDate(data);
+            fetchedCustomizations.value = orderedCustomizations;
         } catch (error) {
             handleRequestError('fetchCustomizations', error);
         }
+    };
+
+    /* Função para ordenar as personalizações por data de criação
+    * @returns {void}
+    */
+    const orderCustomizationsByDate = (customizations) => {
+        customizations.sort((a, b) => {
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+
+        return customizations;
     };
 
     return {
