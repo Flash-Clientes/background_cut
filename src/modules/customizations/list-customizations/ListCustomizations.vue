@@ -2,22 +2,40 @@
     <n-space class="main-container" justify="center" align="center" size="large">
         <n-typography>
             <n-h1 class="title-text">Gestão de Personalizações</n-h1>
+            
+            <n-space class="select-all" align="flex-start" justify="flex-start">
+                <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
+                <n-text>Selecionar Todas</n-text>
+            </n-space>
         </n-typography>
         
+        <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
+            <i class="fa fa-trash"></i>
+        </n-button>
+
         <n-space class="customizations-container" align="start">
             <n-card
-            v-for="(customization, index) in fetchedCustomizations"
-            :key="index"
-            class="customization-card"
-            bordered
+                v-for="(customization, index) in fetchedCustomizations"
+                :key="index"
+                class="customization-card"
+                bordered
             >
+                <n-checkbox 
+                :checked="selectedCustomizations.includes(customization.id)"
+                @update:checked="customization.checked = $event"
+                @click="() => selectedCustomizations = selectedCustomizations.includes(customization.id) ?
+                    selectedCustomizations.filter(id => id !== customization.id) :
+                    [...selectedCustomizations, customization.id]"
+                class="customization-checkbox"
+                />
+
                 <n-space class="customization-content" vertical size="small">
                     <img
-                    :src="customization.imagem_usuario" 
-                    alt="Imagem do Usuário"
-                    class="image"
-                    width="200"
-                    @click="openCustomizationModal(customization)"
+                        :src="customization.imagem_usuario" 
+                        alt="Imagem do Usuário"
+                        class="image"
+                        width="200"
+                        @click="openCustomizationModal(customization)"
                     />
                     <n-text class="label">Campanha: {{ customization.campanha }}</n-text>
                     <n-text class="label">Telefone: {{ customization.whatsapp }}</n-text>
@@ -28,35 +46,60 @@
     </n-space>
 
     <n-modal 
-    v-model:show="showCustomizationModal" 
-    title="Detalhes da Personalização"
-    preset="dialog"
-    style="width: 50%; text-align: center;"
-    :negative-text="'Fechar'"
-    @negative-click="() => showCustomizationModal = false"
-    @close="showCustomizationModal = false"
+        v-model:show="showCustomizationModal" 
+        title="Detalhes da Personalização"
+        preset="dialog"
+        style="width: 50%; text-align: center;"
+        :negative-text="'Fechar'"
+        @negative-click="() => showCustomizationModal = false"
+        @close="showCustomizationModal = false"
     >
         <n-space vertical>
             <img
-            :src="customizationModalData?.imagem_usuario"
-            alt="Imagem do Usuário"
-            width="200"
-            style="margin-top: 16px;"
+                :src="customizationModalData?.imagem_usuario"
+                alt="Imagem do Usuário"
+                width="200"
+                style="margin-top: 16px;"
             />
         </n-space>
     </n-modal>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import useListCustomizations from './hooks/useListCustomizations'
 const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
 
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
 
+const isAllSelected = computed({
+    get: () => {
+        return fetchedCustomizations.value.length > 0 && selectedCustomizations.value.length === fetchedCustomizations.value.length;
+    },
+    set: (value) => {
+        selectedCustomizations.value = value ? fetchedCustomizations.value.map(customization => customization.id) : [];
+    }
+});
+const selectedCustomizations = ref([]);
+
+const toggleSelectAll = () => {
+    if (isAllSelected.value) {
+        selectedCustomizations.value = [];
+    } else {
+        selectedCustomizations.value = fetchedCustomizations.value.map(customization => customization.id);
+    }
+}
+
+const deleteSelectedCustomizations = () => {
+    if (selectedCustomizations.value.length) {
+        fetchedCustomizations.value = fetchedCustomizations.value.filter(
+            customization => !selectedCustomizations.value.includes(customization.id)
+        )
+    }
+}
+
 const openCustomizationModal = (customization) => {
-    console.log(customization)
     customizationModalData.value = customization;
     showCustomizationModal.value = true;
 }
@@ -107,6 +150,22 @@ onMounted(async () => {
 
 .customization-content {
     align-items: center;
+}
+
+.customization-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.delete-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.select-all {
+    margin-bottom: 16px;
 }
 
 .image {
