@@ -13,19 +13,19 @@
                 <n-h1 class="title-text">Gestão de Personalizações</n-h1>    
             </n-typography>
             
-            <n-space v-if="filteredCustomizations.length" class="select-all" align="flex-start" justify="flex-start">
+            <n-space v-if="filteredCustomizations?.length" class="select-all" align="flex-start" justify="flex-start">
                 <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
                 <n-text>Selecionar Todas</n-text>
             </n-space>
             
-            <n-empty v-if="!filteredCustomizations.length" description="Nenhuma personalização encontrada." />
+            <n-empty v-if="!filteredCustomizations?.length" description="Nenhuma personalização encontrada." />
         </n-space>
         
         <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
             <i class="fa fa-trash"></i>
         </n-button>
 
-        <n-space class="customizations-container" align="start">
+        <n-space class="customizations-container" align="start" v-if="filteredCustomizations">
             <n-card
                 v-for="(customization, index) in filteredCustomizations"
                 :key="index"
@@ -127,7 +127,7 @@ const deleteSelectedCustomizations = () => {
     }
 }
 
-const filteredCustomizations = computed(() => fetchedCustomizations.value.filter(customization => {
+const filteredCustomizations = computed(() => fetchedCustomizations.value?.filter(customization => {
     return customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase());
 }));
 
