@@ -1,13 +1,17 @@
 <template>
-    <n-space class="main-container" justify="center" align="center" size="large">
-        <n-typography>
-            <n-h1 class="title-text">Gestão de Personalizações</n-h1>
+    <n-space class="main-container" justify="center" align="center" size="large" vertical>
+        <n-space vertical>
+            <n-typography>
+                <n-h1 class="title-text">Gestão de Personalizações</n-h1>    
+            </n-typography>
             
-            <n-space class="select-all" align="flex-start" justify="flex-start">
+            <n-space v-if="fetchedCustomizations.length" class="select-all" align="flex-start" justify="flex-start">
                 <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
                 <n-text>Selecionar Todas</n-text>
             </n-space>
-        </n-typography>
+            
+            <n-empty v-if="!fetchedCustomizations.length" description="Nenhuma personalização encontrada." />
+        </n-space>
         
         <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
             <i class="fa fa-trash"></i>
@@ -66,9 +70,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { toast } from "vue3-toastify";
+
 import useListCustomizations from './hooks/useListCustomizations'
 const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
+
+import useRemoveCustomization from './hooks/useRemoveCustomization'
+const { removeCustomization } = useRemoveCustomization()
 
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
@@ -93,9 +102,25 @@ const toggleSelectAll = () => {
 
 const deleteSelectedCustomizations = () => {
     if (selectedCustomizations.value.length) {
-        fetchedCustomizations.value = fetchedCustomizations.value.filter(
-            customization => !selectedCustomizations.value.includes(customization.id)
-        )
+        selectedCustomizations.value.forEach(async (customizationId) => {
+            await removeCustomization(customizationId);
+        });
+
+        fetchedCustomizations.value = fetchedCustomizations.value.filter(customization => !selectedCustomizations.value.includes(customization.id));
+        selectedCustomizations.value = [];    
+
+        toast.success('Personalizações removidas com sucesso!', {
+            position: 'top-right',
+            autoClose: 5000,
+            type: 'success',
+            toastStyle: {
+                "--toastify-icon-color-success": "#00a854",
+                "--toastify-color-success": "#00a854",
+            },
+            progressStyle: {
+                "--toastify-progress-bar-color-success": "#00a854",
+            },
+        });
     }
 }
 
