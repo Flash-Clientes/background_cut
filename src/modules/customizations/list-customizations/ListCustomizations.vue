@@ -1,16 +1,24 @@
 <template>
     <n-space class="main-container" justify="center" align="center" size="large" vertical>
+        <n-input
+            v-model:value="searchQuery"
+            placeholder="Buscar personalizações..."
+            clearable
+            class="search-input"
+            @keyup.enter="handleSearchCustomizations"
+        />
+        
         <n-space vertical>
             <n-typography>
                 <n-h1 class="title-text">Gestão de Personalizações</n-h1>    
             </n-typography>
             
-            <n-space v-if="fetchedCustomizations.length" class="select-all" align="flex-start" justify="flex-start">
+            <n-space v-if="filteredCustomizations.length" class="select-all" align="flex-start" justify="flex-start">
                 <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
                 <n-text>Selecionar Todas</n-text>
             </n-space>
             
-            <n-empty v-if="!fetchedCustomizations.length" description="Nenhuma personalização encontrada." />
+            <n-empty v-if="!filteredCustomizations.length" description="Nenhuma personalização encontrada." />
         </n-space>
         
         <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
@@ -19,18 +27,15 @@
 
         <n-space class="customizations-container" align="start">
             <n-card
-                v-for="(customization, index) in fetchedCustomizations"
+                v-for="(customization, index) in filteredCustomizations"
                 :key="index"
                 class="customization-card"
                 bordered
             >
                 <n-checkbox 
-                :checked="selectedCustomizations.includes(customization.id)"
-                @update:checked="customization.checked = $event"
-                @click="() => selectedCustomizations = selectedCustomizations.includes(customization.id) ?
-                    selectedCustomizations.filter(id => id !== customization.id) :
-                    [...selectedCustomizations, customization.id]"
-                class="customization-checkbox"
+                    :checked="selectedCustomizations.includes(customization.id)"
+                    @click="toggleCustomizationSelection(customization.id)"
+                    class="customization-checkbox"
                 />
 
                 <n-space class="customization-content" vertical size="small">
@@ -79,6 +84,8 @@ const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
 import useRemoveCustomization from './hooks/useRemoveCustomization'
 const { removeCustomization } = useRemoveCustomization()
 
+const searchQuery = ref('');
+
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
 
@@ -93,11 +100,7 @@ const isAllSelected = computed({
 const selectedCustomizations = ref([]);
 
 const toggleSelectAll = () => {
-    if (isAllSelected.value) {
-        selectedCustomizations.value = [];
-    } else {
-        selectedCustomizations.value = fetchedCustomizations.value.map(customization => customization.id);
-    }
+    selectedCustomizations.value = isAllSelected.value ? [] : fetchedCustomizations.value.map(customization => customization.id);
 }
 
 const deleteSelectedCustomizations = () => {
@@ -124,6 +127,27 @@ const deleteSelectedCustomizations = () => {
     }
 }
 
+const filteredCustomizations = computed(() => fetchedCustomizations.value.filter(customization => {
+    return customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase());
+}));
+
+const handleSearchCustomizations = () => {
+    const query = searchQuery.value.trim().toLowerCase();
+    if (!query) return;
+
+    const foundCustomizations = fetchedCustomizations.value.filter(customization => {
+        return customization.campanha.toLowerCase().includes(query) || customization.whatsapp.includes(query) || customization.empresa.toLowerCase().includes(query);
+    });
+
+    filteredCustomizations.value = foundCustomizations;
+}
+
+const toggleCustomizationSelection = (id) => {
+    selectedCustomizations.value = selectedCustomizations.value.includes(id)
+        ? selectedCustomizations.value.filter(customizationId => customizationId !== id)
+        : [...selectedCustomizations.value, id];
+}
+
 const openCustomizationModal = (customization) => {
     customizationModalData.value = customization;
     showCustomizationModal.value = true;
@@ -134,12 +158,19 @@ onMounted(async () => {
 });
 </script>
 
+
 <style scoped>
 .main-container {
     margin: 32px;
     padding: 24px;
     max-width: 1200px;
     width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 24px;
 }
 
 .title-text {
