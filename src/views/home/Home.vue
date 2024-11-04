@@ -1,24 +1,24 @@
 <template>
   <n-space
-    class="main-container"
-    justify="space-between"
-    align="center"
-    size="large"
+  class="main-container"
+  justify="space-between"
+  align="center"
+  size="large"
   >
     <n-space class="interation-content">
       <!-- Logo -->
       <n-avatar
-        class="logo"
-        size="120"
-        src="https://flashvolve.com/images/logo_automacao_criativa.svg"
-        alt="Logo Autmação Criativa"
+      class="logo"
+      size="120"
+      src="https://flashvolve.com/images/logo_automacao_criativa.svg"
+      alt="Logo Autmação Criativa"
       />
-
+    
       <!-- Título -->
       <n-typography>
         <n-h1 class="title-text">Bem vindo à Flash Automação Criativa</n-h1>
       </n-typography>
-
+    
       <!-- Descrição -->
       <n-typography>
         <n-text class="description-text">
@@ -26,90 +26,166 @@
           upload da sua imagem abaixo.
         </n-text>
       </n-typography>
-
+    
       <!-- Input de Drag and Drop para Upload -->
       <n-space class="uploader-container">
         <n-upload
-          :multiple="false"
-          :directory-dnd="true"
-          :show-upload-list="false"
-          @change="handleUploadChange"
-          accept="image/*"
+        :multiple="false"
+        :directory-dnd="true"
+        :show-upload-list="false"
+        @change="handleUploadChange"
+        accept="image/*"
         >
-          <n-upload-dragger v-if="!previewImageUrlRef">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="30px"
-                height="30px"
-                viewBox="0 0 24 24"
+        <n-upload-dragger v-if="!previewImageUrlRef">
+          <div>
+            <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30px"
+            height="30px"
+            viewBox="0 0 24 24"
+            >
+              <g
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="1.5"
               >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-width="1.5"
-                >
-                  <path
-                    stroke-linejoin="round"
-                    d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
-                  />
-                  <path stroke-miterlimit="10" d="M12 12v5" />
-                  <path
-                    stroke-linejoin="round"
-                    d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
-                  />
-                </g>
-              </svg>
-            </div>
-
-            <n-text style="font-size: 16px">
-              Clique ou arraste e solte a imagem aqui para fazer o upload.
-            </n-text>
-          </n-upload-dragger>
-          <n-card v-else class="uploaded-image">
-            <img
-              :src="previewImageUrlRef"
-              alt="Imagem sem fundo"
-              style="width: 100%"
-            />
-          </n-card>
-        </n-upload>
-      </n-space>
+              <path
+              stroke-linejoin="round"
+              d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
+              />
+              <path stroke-miterlimit="10" d="M12 12v5" />
+              <path
+              stroke-linejoin="round"
+              d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
+              />
+              </g>
+            </svg>
+          </div>
+      
+          <n-text style="font-size: 16px">
+            Clique ou arraste e solte a imagem aqui para fazer o upload.
+          </n-text>
+        </n-upload-dragger>
+    
+        <n-card v-else class="uploaded-image">
+          <img
+          :src="previewImageUrlRef"
+          alt="Imagem sem fundo"
+          style="width: 100%"
+          />
+        </n-card>
+      </n-upload>
+    </n-space>
     </n-space>
 
     <!-- Imagem de Exemplo -->
     <n-spin :show="isLoading">
       <n-space class="result-content">
         <n-image
-          :src="
-            resultImageUrlRef ||
-            'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'
-          "
-          alt="Imagem sem fundo"
-          width="400"
+        :src="
+        resultImageUrlRef ||
+        'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'
+        "
+        alt="Imagem sem fundo"
+        width="400"
         />
-
+        
         <n-button
-          v-if="resultImageUrlRef"
-          style="color: #000000"
-          :loading="loading"
-          @click="downloadImage"
+        v-if="resultImageUrlRef"
+        style="color: #000000"
+        :loading="loading"
+        @click="downloadImage"
         >
           Download
         </n-button>
       </n-space>
     </n-spin>
-  </n-space>
+</n-space>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed, onMounted, ref  } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 
 import useRegisterCustomization from './hooks/register-customization/useRegisterCustomization';
 const { registerCustomization } = useRegisterCustomization();
+
+import useListCustomizations from './hooks/list-customizations/useListCustomizations'
+const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
+
+import useRemoveCustomization from './hooks/remove-customization/useRemoveCustomization'
+const { removeCustomization } = useRemoveCustomization()
+
+const searchQuery = ref('');
+
+const showCustomizationModal = ref(false);
+const customizationModalData = ref(null);
+
+const isAllSelected = computed({
+  get: () => {
+    return fetchedCustomizations.value.length > 0 && selectedCustomizations.value.length === fetchedCustomizations.value.length;
+  },
+  set: (value) => {
+    selectedCustomizations.value = value ? fetchedCustomizations.value.map(customization => customization.id) : [];
+  }
+});
+const selectedCustomizations = ref([]);
+
+const toggleSelectAll = () => {
+  selectedCustomizations.value = isAllSelected.value ? [] : fetchedCustomizations.value.map(customization => customization.id);
+}
+
+const deleteSelectedCustomizations = () => {
+  if (selectedCustomizations.value.length) {
+    selectedCustomizations.value.forEach(async (customizationId) => {
+      await removeCustomization(customizationId);
+    });
+    
+    fetchedCustomizations.value = fetchedCustomizations.value.filter(customization => !selectedCustomizations.value.includes(customization.id));
+    selectedCustomizations.value = [];    
+    
+    toast.success('Personalizações removidas com sucesso!', {
+      position: 'top-right',
+      autoClose: 5000,
+      type: 'success',
+      toastStyle: {
+        "--toastify-icon-color-success": "#00a854",
+        "--toastify-color-success": "#00a854",
+      },
+      progressStyle: {
+        "--toastify-progress-bar-color-success": "#00a854",
+      },
+    });
+  }
+}
+
+const filteredCustomizations = computed(() => fetchedCustomizations.value?.filter(customization => {
+  return customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase());
+}));
+
+const handleSearchCustomizations = () => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return;
+  
+  const foundCustomizations = fetchedCustomizations.value.filter(customization => {
+    return customization.campanha.toLowerCase().includes(query) || customization.whatsapp.includes(query) || customization.empresa.toLowerCase().includes(query);
+  });
+  
+  filteredCustomizations.value = foundCustomizations;
+}
+
+const toggleCustomizationSelection = (id) => {
+  selectedCustomizations.value = selectedCustomizations.value.includes(id)
+  ? selectedCustomizations.value.filter(customizationId => customizationId !== id)
+  : [...selectedCustomizations.value, id];
+}
+
+const openCustomizationModal = (customization) => {
+  customizationModalData.value = customization;
+  showCustomizationModal.value = true;
+}
 
 const isLoading = ref(false);
 const previewImageUrlRef = ref("");
@@ -118,11 +194,11 @@ const resultImageUrlRef = ref("");
 const handleUploadChange = async ({ fileList }) => {
   if (!fileList.length) {
     previewImageUrlRef.value = "";
-
+    
     return;
   } else if (!fileList[0]?.file) {
     previewImageUrlRef.value = "";
-
+    
     toast("Erro ao carregar a imagem. Tente novamente.", {
       position: "top-right",
       autoClose: 5000,
@@ -135,17 +211,17 @@ const handleUploadChange = async ({ fileList }) => {
         "--toastify-progress-bar-color-error": "#c60d31",
       },
     });
-
+    
     return;
   }
-
+  
   isLoading.value = true;
-
+  
   const fileSize = fileList[0].file.size / 1024 / 1024;
   if (fileSize > 12) {
     isLoading.value = false;
     previewImageUrlRef.value = "";
-
+    
     toast("O tamanho da imagem não pode ser maior que 12MB.", {
       position: "top-right",
       autoClose: 5000,
@@ -158,18 +234,18 @@ const handleUploadChange = async ({ fileList }) => {
         "--toastify-progress-bar-color-error": "#c60d31",
       },
     });
-
+    
     return;
   }
-
+  
   previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);
-
+  
   let data = JSON.stringify({
     imageUrl: previewImageUrlRef.value,
     nameFile: `${new Date().getTime()}.png`,
   });
   console.log(data);
-
+  
   let config = {
     method: "post",
     maxBodyLength: Infinity,
@@ -179,13 +255,23 @@ const handleUploadChange = async ({ fileList }) => {
     },
     data: data,
   };
-
+  
   try {
     const response = await axios.request(config);
     console.log(JSON.stringify(response.data));
-
+    
     resultImageUrlRef.value = response.data.imageUrl;
-
+    
+    const customizationToRegister = {
+      'imagem_personalizada': resultImageUrlRef.value,
+      'imagem_usuario': previewImageUrlRef.value,
+      'campanha': 'Remoção de Fundo',
+      'whatsapp': '5511999999999',
+      'empresa_id': '0'
+    };
+    
+    await registerCustomization(customizationToRegister);
+    
     toast("Imagem sem fundo gerada com sucesso!", {
       position: "top-right",
       autoClose: 5000,
@@ -206,137 +292,138 @@ const handleUploadChange = async ({ fileList }) => {
     }, 8000); // Aguarda 5 segundos (5000 ms)
   }
   /*const formData = new FormData();
-    formData.append('file_url', previewImageUrlRef.value);
-    formData.append('max-resolution', 12000000);
-    formData.append('quality', 'medium');
-    formData.append('format', 'png');
-
-    try {
-        const response = await axios.post('https://backgroundcut.co/api/v1/cut/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${import.meta.env.VITE_BACKGROUND_CUT_API_KEY}`,
-            }
-        }, {
-            timeout: 2000,
-        });
-
-        if (response && response.data) {
-            resultImageUrlRef.value = response.data.output_image_url;
-
-            toast('Imagem sem fundo gerada com sucesso!', {
-                position: 'top-right',
-                autoClose: 5000,
-                type: 'success',
-                toastStyle: {
-                    "--toastify-icon-color-success": "#00a854",
-                    "--toastify-color-success": "#00a854",
-                },
-                progressStyle: {
-                    "--toastify-progress-bar-color-success": "#00a854",
-                },
-            });
-
-            const customizationToRegister = {
-                'imagem_personalizada': resultImageUrlRef.value,
-                'imagem_usuario': previewImageUrlRef.value,
-                'campanha': 'Remoção de Fundo',
-                'whatsapp': '5511999999999',
-                'empresa_id': '0'
-            };
-
-            await registerCustomization(customizationToRegister);
-        }
-    } catch (error) {
-        console.error('Erro ao processar a imagem. Tente novamente.', error);
-        toast('Erro ao processar a imagem. Tente novamente.', {
-            position: 'top-right',
-            autoClose: 5000,
-            type: 'error',
-            toastStyle: {
-                "--toastify-icon-color-error": "#c60d31",
-                "--toastify-color-error": "#c60d31",
-            },
-            progressStyle: {
-                "--toastify-progress-bar-color-error": "#c60d31",
-            },
-        });
-    } finally {
-        isLoading.value = false;
-    }*/
+  formData.append('file_url', previewImageUrlRef.value);
+  formData.append('max-resolution', 12000000);
+  formData.append('quality', 'medium');
+  formData.append('format', 'png');
+  
+  try {
+  const response = await axios.post('https://backgroundcut.co/api/v1/cut/', formData, {
+  headers: {
+  'Content-Type': 'multipart/form-data',
+  'Authorization': `Bearer ${import.meta.env.VITE_BACKGROUND_CUT_API_KEY}`,
+  }
+  }, {
+  timeout: 2000,
+  });
+  
+  if (response && response.data) {
+  resultImageUrlRef.value = response.data.output_image_url;
+  
+  toast('Imagem sem fundo gerada com sucesso!', {
+  position: 'top-right',
+  autoClose: 5000,
+  type: 'success',
+  toastStyle: {
+  "--toastify-icon-color-success": "#00a854",
+  "--toastify-color-success": "#00a854",
+  },
+  progressStyle: {
+  "--toastify-progress-bar-color-success": "#00a854",
+  },
+  });
+  
+  const customizationToRegister = {
+  'imagem_personalizada': resultImageUrlRef.value,
+  'imagem_usuario': previewImageUrlRef.value,
+  'campanha': 'Remoção de Fundo',
+  'whatsapp': '5511999999999',
+  'empresa_id': '0'
+  };
+  
+  await registerCustomization(customizationToRegister);
+  }
+  } catch (error) {
+  console.error('Erro ao processar a imagem. Tente novamente.', error);
+  toast('Erro ao processar a imagem. Tente novamente.', {
+  position: 'top-right',
+  autoClose: 5000,
+  type: 'error',
+  toastStyle: {
+  "--toastify-icon-color-error": "#c60d31",
+  "--toastify-color-error": "#c60d31",
+  },
+  progressStyle: {
+  "--toastify-progress-bar-color-error": "#c60d31",
+  },
+  });
+  } finally {
+  isLoading.value = false;
+  }*/
 };
 // Função que faz o download da imagem
 function downloadImage() {
   const imageUrl = resultImageUrlRef.value;
   fetch(imageUrl)
-    .then((response) => response.blob())
-    .then((blob) => {
-      // Cria um objeto URL para o blob
-      const blobUrl = URL.createObjectURL(blob);
-
-      // Cria um elemento <a> temporário
+  .then((response) => response.blob())
+  .then((blob) => {
+    // Cria um objeto URL para o blob
+    const blobUrl = URL.createObjectURL(blob);
+    
+    // Cria um elemento <a> temporário
       const link = document.createElement("a");
       link.href = blobUrl;
-
+      
       // Define o nome do arquivo para o download
       link.download = "image.png";
-
+      
       // Simula o clique no link para iniciar o download
       document.body.appendChild(link);
       link.click();
-
+      
       // Remove o link do documento
       document.body.removeChild(link);
-
+      
       // Revoga o objeto URL para liberar memória
       URL.revokeObjectURL(blobUrl);
     })
     .catch((error) => console.error("Erro ao baixar a imagem:", error));
-}
-
-const uploadImageToCloudinary = async (fileItem) => {
-  const formData = new FormData();
-  formData.append("file", fileItem);
-  formData.append(
+  }
+  
+  const uploadImageToCloudinary = async (fileItem) => {
+    const formData = new FormData();
+    formData.append("file", fileItem);
+    formData.append(
     "upload_preset",
     import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-  );
-  formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
-
-  const { data: cloudUrl } = await axios.post(
+    );
+    formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
+    
+    const { data: cloudUrl } = await axios.post(
     `https://api.cloudinary.com/v1_1/${
-      import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+    import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
     }/auto/upload`,
     formData,
     {
       headers: { "Content-Type": "multipart/form-data" },
     }
-  );
-
-  return cloudUrl.secure_url;
-};
-
-// Função para fazer a requisição para ativar o glitch
-async function turnOnVM() {
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://healthy-sideways-freeze.glitch.me/turn-on",
-    headers: {},
+    );
+    
+    return cloudUrl.secure_url;
   };
-
-  try {
-    const response = await axios.request(config);
-    console.log(JSON.stringify(response.data));
-  } catch (error) {
-    console.error("Error making POST request:", error);
+  
+  // Função para fazer a requisição para ativar o glitch
+  async function turnOnVM() {
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://healthy-sideways-freeze.glitch.me/turn-on",
+      headers: {},
+    };
+    
+    try {
+      const response = await axios.request(config);
+      console.log(JSON.stringify(response.data));
+    } catch (error) {
+      console.error("Error making POST request:", error);
+    }
   }
-}
-
-// Quando o componente for montado, faz a requisição
-onMounted(() => {
-  turnOnVM();
-});
+  
+  // Quando o componente for montado, faz a requisição
+  onMounted(async () => {
+    turnOnVM();
+    await fetchCustomizations();
+  });
 </script>
 
 <style scoped>
@@ -417,17 +504,17 @@ onMounted(() => {
   .main-container {
     flex-flow: column !important;
   }
-
+  
   .interation-content {
     width: 100%;
   }
-
+  
   .result-content {
     margin-top: 20px;
     padding: 0 20px;
     flex-direction: column-reverse;
   }
-
+  
   .n-image {
     width: 70% !important;
     height: 70% !important;
