@@ -1,24 +1,22 @@
 <template>
-  <n-space
-  class="main-container"
-  justify="space-between"
-  align="center"
-  size="large"
-  >
-    <n-space class="interation-content">
-      <!-- Logo -->
-      <n-avatar
-      class="logo"
-      size="120"
-      src="https://flashvolve.com/images/logo_automacao_criativa.svg"
-      alt="Logo Autmação Criativa"
-      />
+  <n-space class="main-container" justify="space-between" align="center" size="large">
     
+    <!-- Conteúdo principal -->
+    <n-space class="interation-content">
+      
+      <!-- Logo -->
+      <n-avatar 
+        class="logo"
+        size="120"
+        src="https://flashvolve.com/images/logo_automacao_criativa.svg"
+        alt="Logo Automação Criativa"
+      />
+      
       <!-- Título -->
       <n-typography>
-        <n-h1 class="title-text">Bem vindo à Flash Automação Criativa</n-h1>
+        <n-h1 class="title-text">Bem-vindo à Flash Automação Criativa</n-h1>
       </n-typography>
-    
+      
       <!-- Descrição -->
       <n-typography>
         <n-text class="description-text">
@@ -26,158 +24,150 @@
           upload da sua imagem abaixo.
         </n-text>
       </n-typography>
-    
+      
       <!-- Input de Drag and Drop para Upload -->
       <n-space class="uploader-container">
         <n-upload
-        :multiple="false"
-        :directory-dnd="true"
-        :show-upload-list="false"
-        @change="handleUploadChange"
-        accept="image/*"
+          :multiple="false"
+          :directory-dnd="true"
+          :show-upload-list="false"
+          @change="handleUploadChange"
+          accept="image/*"
         >
-        <n-upload-dragger v-if="!previewImageUrlRef">
-          <div>
-            <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30px"
-            height="30px"
-            viewBox="0 0 24 24"
-            >
-              <g
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="1.5"
-              >
-              <path
-              stroke-linejoin="round"
-              d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
-              />
-              <path stroke-miterlimit="10" d="M12 12v5" />
-              <path
-              stroke-linejoin="round"
-              d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
-              />
-              </g>
-            </svg>
-          </div>
+          <n-upload-dragger v-if="!previewImageUrlRef">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                  <path 
+                    stroke-linejoin="round" 
+                    d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
+                  />
+                  <path stroke-miterlimit="10" d="M12 12v5" />
+                  <path 
+                    stroke-linejoin="round" 
+                    d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
+                  />
+                </g>
+              </svg>
+            </div>
+            <n-text style="font-size: 16px">
+              Clique ou arraste e solte a imagem aqui para fazer o upload.
+            </n-text>
+          </n-upload-dragger>
+          <n-card v-else class="uploaded-image">
+            <img :src="previewImageUrlRef" alt="Imagem sem fundo" style="width: 100%" />
+          </n-card>
+        </n-upload>
+      </n-space>
       
-          <n-text style="font-size: 16px">
-            Clique ou arraste e solte a imagem aqui para fazer o upload.
-          </n-text>
-        </n-upload-dragger>
-    
-        <n-card v-else class="uploaded-image">
-          <img
-          :src="previewImageUrlRef"
-          alt="Imagem sem fundo"
-          style="width: 100%"
-          />
-        </n-card>
-      </n-upload>
-    </n-space>
     </n-space>
 
     <!-- Imagem de Exemplo -->
     <n-spin :show="isLoading">
       <n-space class="result-content">
         <n-image
-        :src="
-        resultImageUrlRef ||
-        'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'
-        "
-        alt="Imagem sem fundo"
-        width="400"
+          :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
+          alt="Imagem sem fundo"
+          width="400"
         />
-        
         <n-button
-        v-if="resultImageUrlRef"
-        style="color: #000000"
-        :loading="loading"
-        @click="downloadImage"
+          v-if="resultImageUrlRef"
+          style="color: #000000"
+          :loading="loading"
+          @click="downloadImage"
         >
           Download
         </n-button>
       </n-space>
     </n-spin>
+    
   </n-space>
 
-  <n-space>
-    <n-space class="list-container" justify="center" align="center" size="large" vertical>
+  <!-- Gestão de Personalizações -->
+  <n-space class="list-container" justify="center" align="center" size="large" vertical>
+    
+    <n-space vertical>
+      <n-typography>
+        <n-h1 class="title-text">Personalizações Anteriores</n-h1>
+      </n-typography>
+      
+      <n-space v-if="filteredCustomizations?.length" class="action-content" align="flex-start" justify="space-between">
+        <n-space>
+          <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
+          <n-text>Selecionar Todas</n-text>
+        </n-space>
+  
         <n-input
-            v-model:value="searchQuery"
-            placeholder="Buscar personalizações..."
-            clearable
-            class="search-input"
-            @keyup.enter="handleSearchCustomizations"
+          v-model:value="searchQuery"
+          placeholder="Buscar personalizações..."
+          clearable
+          class="search-input"
+          @keyup.enter="handleSearchCustomizations"
         />
-        
-        <n-space vertical>
-            <n-typography>
-                <n-h1 class="title-text">Gestão de Personalizações</n-h1>    
-            </n-typography>
-            
-            <n-space v-if="filteredCustomizations?.length" class="select-all" align="flex-start" justify="flex-start">
-                <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
-                <n-text>Selecionar Todas</n-text>
-            </n-space>
-            
-            <n-empty v-if="!filteredCustomizations?.length" description="Nenhuma personalização encontrada." />
-        </n-space>
-        
-        <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
-            <i class="fa fa-trash"></i>
-        </n-button> 
 
-        <n-space class="customizations-container" align="start" v-if="filteredCustomizations">
-            <n-card
-                v-for="(customization, index) in filteredCustomizations"
-                :key="index"
-                class="customization-card"
-                bordered
-            >
-                <n-checkbox 
-                    :checked="selectedCustomizations.includes(customization.id)"
-                    @click="toggleCustomizationSelection(customization.id)"
-                    class="customization-checkbox"
-                />
+        <n-button 
+          type="error" 
+          @click="deleteSelectedCustomizations" 
+          :disabled="!selectedCustomizations.length"
+          >
+          <i class="fa fa-trash"></i>
+        </n-button>
 
-                <n-space class="customization-content" vertical size="small">
-                    <img
-                        :src="customization.imagem_usuario" 
-                        alt="Imagem do Usuário"
-                        class="image"
-                        width="200"
-                        @click="openCustomizationModal(customization)"
-                    />
-                    <n-text class="label">Campanha: {{ customization.campanha }}</n-text>
-                    <n-text class="label">Telefone: {{ customization.whatsapp }}</n-text>
-                    <n-text class="label">Empresa: {{ 'Americanas' }}</n-text>
-                </n-space>
-            </n-card>
-        </n-space>
+      </n-space>
+      
+      <n-empty v-if="!filteredCustomizations?.length" description="Nenhuma personalização encontrada." />
+      
     </n-space>
-
-    <n-modal 
-        v-model:show="showCustomizationModal" 
-        title="Detalhes da Personalização"
-        preset="dialog"
-        style="width: 50%; text-align: center;"
-        :negative-text="'Fechar'"
-        @negative-click="() => showCustomizationModal = false"
-        @close="showCustomizationModal = false"
-    >
-        <n-space vertical>
-            <img
-                :src="customizationModalData?.imagem_usuario"
-                alt="Imagem do Usuário"
-                width="200"
-                style="margin-top: 16px;"
-            />
+  
+    <n-space class="customizations-container" align="start" v-if="filteredCustomizations">
+      <n-card
+        v-for="(customization, index) in filteredCustomizations"
+        :key="index"
+        class="customization-card"
+        bordered
+      >
+        <n-checkbox 
+          :checked="selectedCustomizations.includes(customization.id)"
+          @click="toggleCustomizationSelection(customization.id)"
+          class="customization-checkbox"
+        />
+        <n-space class="customization-content" vertical size="small">
+          <img 
+            :src="customization.imagem_usuario" 
+            alt="Imagem do Usuário"
+            class="image"
+            width="200"
+            @click="openCustomizationModal(customization)"
+          />
+          <n-text class="label">Campanha: {{ customization.campanha }}</n-text>
+          <n-text class="label">Telefone: {{ customization.whatsapp }}</n-text>
+          <n-text class="label">Empresa: {{ 'Americanas' }}</n-text>
         </n-space>
-    </n-modal>
+      </n-card>
+    </n-space>
+    
   </n-space>
+
+  <!-- Modal de Personalização -->
+  <n-modal 
+    v-model:show="showCustomizationModal" 
+    title="Detalhes da Personalização"
+    preset="dialog"
+    style="width: 50%; text-align: center;"
+    :negative-text="'Fechar'"
+    @negative-click="() => showCustomizationModal = false"
+    @close="showCustomizationModal = false"
+  >
+    <n-space vertical>
+      <img
+        :src="customizationModalData?.imagem_usuario"
+        alt="Imagem do Usuário"
+        width="200"
+        style="margin-top: 16px;"
+      />
+    </n-space>
+  </n-modal>
+  
 </template>
 
 <script setup>
@@ -530,9 +520,11 @@ function downloadImage() {
 }
 
 .title-text {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  margin: 0;
+  color: #2c3e50;
+  text-align: center;
+  margin: 0 0 24px;
 }
 
 .description-text {
@@ -589,14 +581,6 @@ function downloadImage() {
   margin-bottom: 24px;
 }
 
-.title-text {
-  font-size: 28px;
-  font-weight: 700;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
 .customizations-container {
   display: flex;
   flex-wrap: wrap;
@@ -607,12 +591,13 @@ function downloadImage() {
 
 .customization-card {
   width: 260px;
+  height: 400px;
   padding: 16px;
   text-align: center;
   border-radius: 12px;
+  background-color: #ffffff;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
-  background-color: #ffffff;
 }
 
 .customization-card:hover {
@@ -630,21 +615,15 @@ function downloadImage() {
   right: 10px;
 }
 
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.select-all {
+.action-content {
   margin-bottom: 16px;
 }
 
 .image {
   margin: 10px 0;
   border-radius: 10px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
@@ -658,17 +637,17 @@ function downloadImage() {
   .main-container {
     flex-flow: column !important;
   }
-  
+
   .interation-content {
     width: 100%;
   }
-  
+
   .result-content {
     margin-top: 20px;
     padding: 0 20px;
     flex-direction: column-reverse;
   }
-  
+
   .n-image {
     width: 70% !important;
     height: 70% !important;
