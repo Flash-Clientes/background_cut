@@ -91,7 +91,7 @@
         <n-h1 class="title-text">Personalizações Anteriores</n-h1>
       </n-typography>
       
-      <n-space v-if="filteredCustomizations?.length" class="action-content" align="flex-start" justify="space-between">
+      <n-space class="action-content" align="flex-start" justify="space-between">
         <n-space>
           <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
           <n-text>Selecionar Todas</n-text>
