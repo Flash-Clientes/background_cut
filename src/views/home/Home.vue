@@ -240,7 +240,7 @@ const openCustomizationModal = (customization) => {
 const showToast = (message, type = "success") => {
   const color = type === "success" ? "#00a854" : "#c60d31";
   toast(message, {
-    position: "top-right",
+    position: "top-center",
     autoClose: 5000,
     type,
     toastStyle: {
@@ -279,12 +279,12 @@ const downloadSelectedCustomizations = async () => {
     if (selectedCustomizations.value.length > 1) {
       // Se houver mais de uma customização selecionada, cria um ZIP
       await Promise.all(
-        selectedCustomizations.value.map(async (customizationId) => {
+        selectedCustomizations.value.map(async (customizationId, index) => {
           const customization = fetchedCustomizations.value.find(c => c.id === customizationId);
           if (customization && customization.imagem_personalizada) {
             const response = await fetch(customization.imagem_personalizada);
             const blob = await response.blob();
-            zip.file(`${customization.campanha}.png`, blob);
+            zip.file(`${customization.campanha}_${index + 1}.png`, blob);
           }
         })
       );
@@ -373,10 +373,10 @@ const processImage = async (imageUrl) => {
       empresa_id: '0'
     };
 
-    console.log("customizationToRegister", customizationToRegister);
-
     await registerCustomization(customizationToRegister);
     showToast("Imagem sem fundo gerada com sucesso!");
+
+    await fetchCustomizations();
   } catch (error) {
     console.error("Erro ao processar a imagem:", error);
     showToast("Erro ao processar a imagem. Tente novamente.", "error");
