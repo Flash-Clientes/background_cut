@@ -73,7 +73,6 @@
         <n-button
           v-if="resultImageUrlRef"
           style="color: #000000"
-          :loading="loading"
           @click="downloadImage"
         >
           Download
@@ -113,6 +112,13 @@
           <i class="fa fa-trash"></i>
         </n-button>
 
+        <n-button 
+        type="primary"
+        @click="downloadSelectedCustomizations"
+        :disabled="!selectedCustomizations.length"
+        >
+          <i class="fa fa-download"></i>
+        </n-button>
       </n-space>
       
       <n-empty v-if="!filteredCustomizations?.length" description="Nenhuma personalização encontrada." />
@@ -133,7 +139,7 @@
         />
         <n-space class="customization-content" vertical size="small">
           <img 
-            :src="customization.imagem_usuario" 
+            :src="customization.imagem_personalizada" 
             alt="Imagem do Usuário"
             class="image"
             width="200"
@@ -171,325 +177,254 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref  } from "vue";
+import { computed, onMounted, ref } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 import useRegisterCustomization from './hooks/register-customization/useRegisterCustomization';
+import useListCustomizations from './hooks/list-customizations/useListCustomizations';
+import useRemoveCustomization from './hooks/remove-customization/useRemoveCustomization';
+
 const { registerCustomization } = useRegisterCustomization();
+const { fetchedCustomizations, fetchCustomizations } = useListCustomizations();
+const { removeCustomization } = useRemoveCustomization();
 
-import useListCustomizations from './hooks/list-customizations/useListCustomizations'
-const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
-
-import useRemoveCustomization from './hooks/remove-customization/useRemoveCustomization'
-const { removeCustomization } = useRemoveCustomization()
-
+// Estado do componente
 const searchQuery = ref('');
-
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
-
-const isAllSelected = computed({
-  get: () => {
-    return fetchedCustomizations.value.length > 0 && selectedCustomizations.value.length === fetchedCustomizations.value.length;
-  },
-  set: (value) => {
-    selectedCustomizations.value = value ? fetchedCustomizations.value.map(customization => customization.id) : [];
-  }
-});
 const selectedCustomizations = ref([]);
-
-const toggleSelectAll = () => {
-  selectedCustomizations.value = isAllSelected.value ? [] : fetchedCustomizations.value.map(customization => customization.id);
-}
-
-const deleteSelectedCustomizations = () => {
-  if (selectedCustomizations.value.length) {
-    selectedCustomizations.value.forEach(async (customizationId) => {
-      await removeCustomization(customizationId);
-    });
-    
-    fetchedCustomizations.value = fetchedCustomizations.value.filter(customization => !selectedCustomizations.value.includes(customization.id));
-    selectedCustomizations.value = [];    
-    
-    toast.success('Personalizações removidas com sucesso!', {
-      position: 'top-right',
-      autoClose: 5000,
-      type: 'success',
-      toastStyle: {
-        "--toastify-icon-color-success": "#00a854",
-        "--toastify-color-success": "#00a854",
-      },
-      progressStyle: {
-        "--toastify-progress-bar-color-success": "#00a854",
-      },
-    });
-  }
-}
-
-const filteredCustomizations = computed(() => fetchedCustomizations.value?.filter(customization => {
-  return customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase());
-}));
-
-const handleSearchCustomizations = () => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) return;
-  
-  const foundCustomizations = fetchedCustomizations.value.filter(customization => {
-    return customization.campanha.toLowerCase().includes(query) || customization.whatsapp.includes(query) || customization.empresa.toLowerCase().includes(query);
-  });
-  
-  filteredCustomizations.value = foundCustomizations;
-}
-
-const toggleCustomizationSelection = (id) => {
-  selectedCustomizations.value = selectedCustomizations.value.includes(id)
-  ? selectedCustomizations.value.filter(customizationId => customizationId !== id)
-  : [...selectedCustomizations.value, id];
-}
-
-const openCustomizationModal = (customization) => {
-  customizationModalData.value = customization;
-  showCustomizationModal.value = true;
-}
-
 const isLoading = ref(false);
 const previewImageUrlRef = ref("");
 const resultImageUrlRef = ref("");
 
+// Computed para verificar se todas as customizações estão selecionadas
+const isAllSelected = computed({
+  get: () => fetchedCustomizations.value.length > 0 &&
+    selectedCustomizations.value.length === fetchedCustomizations.value.length,
+  set: (value) => {
+    selectedCustomizations.value = value
+      ? fetchedCustomizations.value.map(c => c.id)
+      : [];
+  }
+});
+
+// Computed para aplicar filtro de busca
+const filteredCustomizations = computed(() => 
+  fetchedCustomizations.value.filter(customization => 
+    customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+);
+
+// Funções utilitárias
+const toggleSelectAll = () => {
+  selectedCustomizations.value = isAllSelected.value 
+    ? [] 
+    : fetchedCustomizations.value.map(c => c.id);
+};
+
+const toggleCustomizationSelection = (id) => {
+  selectedCustomizations.value = selectedCustomizations.value.includes(id)
+    ? selectedCustomizations.value.filter(cId => cId !== id)
+    : [...selectedCustomizations.value, id];
+};
+
+const openCustomizationModal = (customization) => {
+  customizationModalData.value = customization;
+  showCustomizationModal.value = true;
+};
+
+const showToast = (message, type = "success") => {
+  const color = type === "success" ? "#00a854" : "#c60d31";
+  toast(message, {
+    position: "top-right",
+    autoClose: 5000,
+    type,
+    toastStyle: {
+      "--toastify-icon-color-success": color,
+      "--toastify-color-success": color,
+    },
+    progressStyle: {
+      "--toastify-progress-bar-color-success": color,
+    }
+  });
+};
+
+// Funções principais
+const deleteSelectedCustomizations = async () => {
+  if (!selectedCustomizations.value.length) return;
+
+  await Promise.all(selectedCustomizations.value.map(removeCustomization));
+  fetchedCustomizations.value = fetchedCustomizations.value.filter(
+    customization => !selectedCustomizations.value.includes(customization.id)
+  );
+  selectedCustomizations.value = [];
+
+  showToast('Personalizações removidas com sucesso!');
+};
+
+
+const downloadSelectedCustomizations = async () => {
+  if (!selectedCustomizations.value.length) {
+    showToast("Nenhuma customização selecionada para download.", "error");
+    return;
+  }
+
+  try {
+    const zip = new JSZip();
+    
+    if (selectedCustomizations.value.length > 1) {
+      // Se houver mais de uma customização selecionada, cria um ZIP
+      await Promise.all(
+        selectedCustomizations.value.map(async (customizationId) => {
+          const customization = fetchedCustomizations.value.find(c => c.id === customizationId);
+          if (customization && customization.imagem_personalizada) {
+            const response = await fetch(customization.imagem_personalizada);
+            const blob = await response.blob();
+            zip.file(`${customization.campanha}.png`, blob);
+          }
+        })
+      );
+
+      // Gera o arquivo ZIP e faz o download
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "customizacoes.zip");
+    } else {
+      // Se houver apenas uma customização, baixa diretamente a imagem
+      const customizationId = selectedCustomizations.value[0];
+      const customization = fetchedCustomizations.value.find(c => c.id === customizationId);
+      if (customization && customization.imagem_personalizada) {
+        const response = await fetch(customization.imagem_personalizada);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = `${customization.campanha}.png`;
+        link.click();
+        URL.revokeObjectURL(blobUrl);
+      }
+    }
+
+    showToast("Imagens das customizações selecionadas baixadas com sucesso!");
+  } catch (error) {
+    console.error("Erro ao baixar as customizações:", error);
+    showToast("Erro ao baixar as customizações. Tente novamente.", "error");
+  }
+};
+
+const handleSearchCustomizations = () => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return;
+
+  filteredCustomizations.value = fetchedCustomizations.value.filter(
+    customization =>
+      customization.campanha.toLowerCase().includes(query) ||
+      customization.whatsapp.includes(query) ||
+      customization.empresa.toLowerCase().includes(query)
+  );
+};
+
 const handleUploadChange = async ({ fileList }) => {
   if (!fileList.length) {
     previewImageUrlRef.value = "";
-    
-    return;
-  } else if (!fileList[0]?.file) {
-    previewImageUrlRef.value = "";
-    
-    toast("Erro ao carregar a imagem. Tente novamente.", {
-      position: "top-right",
-      autoClose: 5000,
-      type: "error",
-      toastStyle: {
-        "--toastify-icon-color-error": "#c60d31",
-        "--toastify-color-error": "#c60d31",
-      },
-      progressStyle: {
-        "--toastify-progress-bar-color-error": "#c60d31",
-      },
-    });
-    
     return;
   }
-  
-  isLoading.value = true;
-  
-  const fileSize = fileList[0].file.size / 1024 / 1024;
+
+  const file = fileList[0]?.file;
+  if (!file) {
+    previewImageUrlRef.value = "";
+    showToast("Erro ao carregar a imagem. Tente novamente.", "error");
+    return;
+  }
+
+  const fileSize = file.size / 1024 / 1024;
   if (fileSize > 12) {
-    isLoading.value = false;
-    previewImageUrlRef.value = "";
-    
-    toast("O tamanho da imagem não pode ser maior que 12MB.", {
-      position: "top-right",
-      autoClose: 5000,
-      type: "error",
-      toastStyle: {
-        "--toastify-icon-color-error": "#c60d31",
-        "--toastify-color-error": "#c60d31",
-      },
-      progressStyle: {
-        "--toastify-progress-bar-color-error": "#c60d31",
-      },
-    });
-    
+    showToast("O tamanho da imagem não pode ser maior que 12MB.", "error");
     return;
   }
-  
-  previewImageUrlRef.value = await uploadImageToCloudinary(fileList[0].file);
-  
-  let data = JSON.stringify({
-    imageUrl: previewImageUrlRef.value,
-    nameFile: `${new Date().getTime()}.png`,
-  });
-  console.log(data);
-  
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://healthy-sideways-freeze.glitch.me/process-image",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-  
-  try {
-    const response = await axios.request(config);
-    console.log(JSON.stringify(response.data));
-    
-    resultImageUrlRef.value = response.data.imageUrl;
-    
-    const customizationToRegister = {
-      'imagem_personalizada': resultImageUrlRef.value,
-      'imagem_usuario': previewImageUrlRef.value,
-      'campanha': 'Remoção de Fundo',
-      'whatsapp': '5511999999999',
-      'empresa_id': '0'
-    };
-    
-    await registerCustomization(customizationToRegister);
-    
-    toast("Imagem sem fundo gerada com sucesso!", {
-      position: "top-right",
-      autoClose: 5000,
-      type: "success",
-      toastStyle: {
-        "--toastify-icon-color-success": "#00a854",
-        "--toastify-color-success": "#00a854",
-      },
-      progressStyle: {
-        "--toastify-progress-bar-color-success": "#00a854",
-      },
-    });
-  } catch (error) {
-    console.error("Error processing image:", error);
-  } finally {
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 8000); // Aguarda 5 segundos (5000 ms)
-  }
-  /*const formData = new FormData();
-  formData.append('file_url', previewImageUrlRef.value);
-  formData.append('max-resolution', 12000000);
-  formData.append('quality', 'medium');
-  formData.append('format', 'png');
-  
-  try {
-  const response = await axios.post('https://backgroundcut.co/api/v1/cut/', formData, {
-  headers: {
-  'Content-Type': 'multipart/form-data',
-  'Authorization': `Bearer ${import.meta.env.VITE_BACKGROUND_CUT_API_KEY}`,
-  }
-  }, {
-  timeout: 2000,
-  });
-  
-  if (response && response.data) {
-  resultImageUrlRef.value = response.data.output_image_url;
-  
-  toast('Imagem sem fundo gerada com sucesso!', {
-  position: 'top-right',
-  autoClose: 5000,
-  type: 'success',
-  toastStyle: {
-  "--toastify-icon-color-success": "#00a854",
-  "--toastify-color-success": "#00a854",
-  },
-  progressStyle: {
-  "--toastify-progress-bar-color-success": "#00a854",
-  },
-  });
-  
-  const customizationToRegister = {
-  'imagem_personalizada': resultImageUrlRef.value,
-  'imagem_usuario': previewImageUrlRef.value,
-  'campanha': 'Remoção de Fundo',
-  'whatsapp': '5511999999999',
-  'empresa_id': '0'
-  };
-  
-  await registerCustomization(customizationToRegister);
-  }
-  } catch (error) {
-  console.error('Erro ao processar a imagem. Tente novamente.', error);
-  toast('Erro ao processar a imagem. Tente novamente.', {
-  position: 'top-right',
-  autoClose: 5000,
-  type: 'error',
-  toastStyle: {
-  "--toastify-icon-color-error": "#c60d31",
-  "--toastify-color-error": "#c60d31",
-  },
-  progressStyle: {
-  "--toastify-progress-bar-color-error": "#c60d31",
-  },
-  });
-  } finally {
+
+  isLoading.value = true;
+  previewImageUrlRef.value = await uploadImageToCloudinary(file);
+  await processImage(previewImageUrlRef.value);
   isLoading.value = false;
-  }*/
 };
-// Função que faz o download da imagem
-function downloadImage() {
-  const imageUrl = resultImageUrlRef.value;
-  fetch(imageUrl)
-  .then((response) => response.blob())
-  .then((blob) => {
-    // Cria um objeto URL para o blob
-    const blobUrl = URL.createObjectURL(blob);
-    
-    // Cria um elemento <a> temporário
+
+const processImage = async (imageUrl) => {
+  const data = JSON.stringify({
+    imageUrl,
+    nameFile: `${Date.now()}.png`
+  });
+
+  try {
+    const response = await axios.post("https://healthy-sideways-freeze.glitch.me/process-image", data, {
+      headers: { "Content-Type": "application/json" }
+    });
+
+    resultImageUrlRef.value = await uploadImageToCloudinary(response.data.imageUrl);
+
+    const customizationToRegister = {
+      imagem_personalizada: resultImageUrlRef.value,
+      imagem_usuario: imageUrl,
+      campanha: 'Remoção de Fundo',
+      whatsapp: '5511999999999',
+      empresa_id: '0'
+    };
+
+    console.log("customizationToRegister", customizationToRegister);
+
+    await registerCustomization(customizationToRegister);
+    showToast("Imagem sem fundo gerada com sucesso!");
+  } catch (error) {
+    console.error("Erro ao processar a imagem:", error);
+    showToast("Erro ao processar a imagem. Tente novamente.", "error");
+  }
+};
+
+const uploadImageToCloudinary = async (fileItem) => {
+  const formData = new FormData();
+  formData.append("file", fileItem);
+  formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+  formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
+
+  const response = await axios.post(
+    `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+
+  return response.data.secure_url;
+};
+
+const downloadImage = () => {
+  fetch(resultImageUrlRef.value)
+    .then(response => response.blob())
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
-      
-      // Define o nome do arquivo para o download
       link.download = "image.png";
-      
-      // Simula o clique no link para iniciar o download
-      document.body.appendChild(link);
       link.click();
-      
-      // Remove o link do documento
-      document.body.removeChild(link);
-      
-      // Revoga o objeto URL para liberar memória
       URL.revokeObjectURL(blobUrl);
     })
-    .catch((error) => console.error("Erro ao baixar a imagem:", error));
+    .catch(error => console.error("Erro ao baixar a imagem:", error));
+};
+
+const turnOnVM = async () => {
+  try {
+    await axios.post("https://healthy-sideways-freeze.glitch.me/turn-on");
+  } catch (error) {
+    console.error("Erro ao ativar a VM:", error);
   }
-  
-  const uploadImageToCloudinary = async (fileItem) => {
-    const formData = new FormData();
-    formData.append("file", fileItem);
-    formData.append(
-    "upload_preset",
-    import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-    );
-    formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
-    
-    const { data: cloudUrl } = await axios.post(
-    `https://api.cloudinary.com/v1_1/${
-    import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-    }/auto/upload`,
-    formData,
-    {
-      headers: { "Content-Type": "multipart/form-data" },
-    }
-    );
-    
-    return cloudUrl.secure_url;
-  };
-  
-  // Função para fazer a requisição para ativar o glitch
-  async function turnOnVM() {
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://healthy-sideways-freeze.glitch.me/turn-on",
-      headers: {},
-    };
-    
-    try {
-      const response = await axios.request(config);
-      console.log(JSON.stringify(response.data));
-    } catch (error) {
-      console.error("Error making POST request:", error);
-    }
-  }
-  
-  // Quando o componente for montado, faz a requisição
-  onMounted(async () => {
-    turnOnVM();
-    await fetchCustomizations();
-  });
+};
+
+// Ciclo de vida
+onMounted(async () => {
+  await turnOnVM();
+  await fetchCustomizations();
+});
 </script>
 
 <style scoped>
@@ -591,7 +526,7 @@ function downloadImage() {
 
 .customization-card {
   width: 260px;
-  height: 400px;
+  height: 430px;
   padding: 16px;
   text-align: center;
   border-radius: 12px;
@@ -620,6 +555,8 @@ function downloadImage() {
 }
 
 .image {
+  height: 200px;
+  object-fit: contain;
   margin: 10px 0;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
