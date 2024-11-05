@@ -14,7 +14,9 @@
       
       <!-- Título -->
       <n-typography>
-        <n-h1 class="title-text">Bem-vindo à Flash Automação Criativa</n-h1>
+        <n-h1 class="title-text">
+          {{ t('pages.home.title') }}
+        </n-h1>
       </n-typography>
       
       <!-- Descrição -->
@@ -183,6 +185,9 @@ import { toast } from "vue3-toastify";
 
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 import useRegisterCustomization from './hooks/register-customization/useRegisterCustomization';
 import useListCustomizations from './hooks/list-customizations/useListCustomizations';
@@ -362,8 +367,8 @@ const processImage = async (imageUrl) => {
     const response = await axios.post("https://healthy-sideways-freeze.glitch.me/process-image", data, {
       headers: { "Content-Type": "application/json" }
     });
-
-    resultImageUrlRef.value = await uploadImageToCloudinary(response.data.imageUrl);
+    
+    resultImageUrlRef.value = response.data.imageUrl;
 
     const customizationToRegister = {
       imagem_personalizada: resultImageUrlRef.value,
