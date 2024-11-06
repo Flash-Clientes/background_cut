@@ -97,14 +97,6 @@
           <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
           <n-text>Selecionar Todas</n-text>
         </n-space>
-  
-        <n-input
-          v-model:value="searchQuery"
-          placeholder="Buscar personalizações..."
-          clearable
-          class="search-input"
-          @keyup.enter="handleSearchCustomizations"
-        />
 
         <n-button 
           type="error" 
@@ -123,13 +115,13 @@
         </n-button>
       </n-space>
       
-      <n-empty v-if="!filteredCustomizations?.length" description="Nenhuma personalização encontrada." />
+      <n-empty v-if="!fetchedCustomizations?.length" description="Nenhuma personalização encontrada." />
       
     </n-space>
   
-    <n-space class="customizations-container" align="start" v-if="filteredCustomizations">
+    <n-space class="customizations-container" align="start" v-if="fetchedCustomizations">
       <n-card
-        v-for="(customization, index) in filteredCustomizations"
+        v-for="(customization, index) in fetchedCustomizations"
         :key="index"
         class="customization-card"
         bordered
@@ -197,8 +189,6 @@ const { registerCustomization } = useRegisterCustomization();
 const { fetchedCustomizations, fetchCustomizations } = useListCustomizations();
 const { removeCustomization } = useRemoveCustomization();
 
-// Estado do componente
-const searchQuery = ref('');
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
 const selectedCustomizations = ref([]);
@@ -206,7 +196,6 @@ const isLoading = ref(false);
 const previewImageUrlRef = ref("");
 const resultImageUrlRef = ref("");
 
-// Computed para verificar se todas as customizações estão selecionadas
 const isAllSelected = computed({
   get: () => fetchedCustomizations.value.length > 0 &&
     selectedCustomizations.value.length === fetchedCustomizations.value.length,
@@ -217,14 +206,6 @@ const isAllSelected = computed({
   }
 });
 
-// Computed para aplicar filtro de busca
-const filteredCustomizations = computed(() => 
-  fetchedCustomizations.value.filter(customization => 
-    customization.campanha.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-);
-
-// Funções utilitárias
 const toggleSelectAll = () => {
   selectedCustomizations.value = isAllSelected.value 
     ? [] 
@@ -258,7 +239,6 @@ const showToast = (message, type = "success") => {
   });
 };
 
-// Funções principais
 const deleteSelectedCustomizations = async () => {
   if (!selectedCustomizations.value.length) return;
 
@@ -282,7 +262,6 @@ const downloadSelectedCustomizations = async () => {
     const zip = new JSZip();
     
     if (selectedCustomizations.value.length > 1) {
-      // Se houver mais de uma customização selecionada, cria um ZIP
       await Promise.all(
         selectedCustomizations.value.map(async (customizationId, index) => {
           const customization = fetchedCustomizations.value.find(c => c.id === customizationId);
@@ -294,11 +273,9 @@ const downloadSelectedCustomizations = async () => {
         })
       );
 
-      // Gera o arquivo ZIP e faz o download
       const content = await zip.generateAsync({ type: "blob" });
       saveAs(content, "customizacoes.zip");
     } else {
-      // Se houver apenas uma customização, baixa diretamente a imagem
       const customizationId = selectedCustomizations.value[0];
       const customization = fetchedCustomizations.value.find(c => c.id === customizationId);
       if (customization && customization.imagem_personalizada) {
@@ -318,18 +295,6 @@ const downloadSelectedCustomizations = async () => {
     console.error("Erro ao baixar as customizações:", error);
     showToast("Erro ao baixar as customizações. Tente novamente.", "error");
   }
-};
-
-const handleSearchCustomizations = () => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) return;
-
-  filteredCustomizations.value = fetchedCustomizations.value.filter(
-    customization =>
-      customization.campanha.toLowerCase().includes(query) ||
-      customization.whatsapp.includes(query) ||
-      customization.empresa.toLowerCase().includes(query)
-  );
 };
 
 const handleUploadChange = async ({ fileList }) => {
@@ -425,7 +390,6 @@ const turnOnVM = async () => {
   }
 };
 
-// Ciclo de vida
 onMounted(async () => {
   await turnOnVM();
   await fetchCustomizations();
@@ -513,12 +477,6 @@ onMounted(async () => {
 .result-content {
   flex-direction: column;
   margin-top: 20px;
-}
-
-.search-input {
-  width: 100%;
-  max-width: 400px;
-  margin-bottom: 24px;
 }
 
 .customizations-container {
