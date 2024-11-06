@@ -2,7 +2,8 @@
     <n-layout-sider
     bordered
     show-trigger
-    collapsed-width="52"
+    collapse-mode="width"
+    :collapsed-width="52"
     @collapse="isCollapsed = true"
     @expand="isCollapsed = false"
     >
