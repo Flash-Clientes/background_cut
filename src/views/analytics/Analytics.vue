@@ -10,7 +10,7 @@
 import { onMounted, provide, ref } from 'vue';
 
 import { useRoute } from 'vue-router';
-import { darkTheme } from 'naove-ui';
+import { darkTheme } from 'naive-ui';
 
 const lightThemeOverrides = {
     'common': {
@@ -80,27 +80,27 @@ const changeLanguage = (lang) => {
 
 <style scoped>
 .n-layout-sider .n-layout-toggle-button {
-  top: 5% !important;
+    top: 5% !important;
 }
 
 .n-layout-sider-scroll-container {
-  overflow: hidden !important;
+    overflow: hidden !important;
 }
 
 .n-layout-scroll-container {
-  overflow-y: hidden;
+    overflow-y: hidden;
 }
 .n-config-provider {
-  height: 100vh;
-  margin: 0;
-  padding: 0;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 .n-layout {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 .main {
-  padding: 0px;
+    padding: 0px;
 }
 </style>
