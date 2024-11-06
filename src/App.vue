@@ -36,10 +36,6 @@ const themeOverrides = ref({
   overflow: hidden !important;
 }
 
-.n-layout-scroll-container {
-  background-color: #f0f2f5;
-}
-
 ::-webkit-scrollbar {
   width: 4px;
 }
