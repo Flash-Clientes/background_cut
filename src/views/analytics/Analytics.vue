@@ -1,16 +1,29 @@
 <template>
     <n-config-provider :theme="theme" :theme-overrides="theme ? darkThemeOverrides : lightThemeOverrides">
-        <n-layout-content class="main">
-            <router-view :locale="locale" />
-        </n-layout-content>
+        <n-layout has-sider v-if="!hideSidebar">
+            <SidebarMenu 
+            v-if="!isMobile"
+            :initial-locale="locale"
+            :user="currentUser"
+            :theme="theme?.name"
+            />
+            
+            <n-layout-content class="main">
+                <router-view :locale="locale" />
+            </n-layout-content>
+        </n-layout>
     </n-config-provider>
 </template>
 
 <script setup>
-import { onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 
 import { useRoute } from 'vue-router';
 import { darkTheme } from 'naive-ui';
+
+import SidebarMenu from './components/sidebar-menu/SidebarMenu.vue';
+
+const isMobile = computed(() => window.innerWidth < 768)
 
 const lightThemeOverrides = {
     'common': {
@@ -60,6 +73,7 @@ const locale = ref(detectedLocale);
 const theme = ref(null);
 
 const route = useRoute();
+const hideSidebar = computed(() => route.meta.hideSidebar);
 
 onMounted(() => {
     locale.value = detectedLocale || 'pt';
