@@ -1,10 +1,8 @@
 <template>
   <n-space class="main-container" justify="space-between" align="center" size="large">
     
-    <!-- Conteúdo principal -->
     <n-space class="interation-content">
       
-      <!-- Logo -->
       <n-avatar 
         class="logo"
         size="120"
@@ -12,14 +10,12 @@
         alt="Logo Automação Criativa"
       />
       
-      <!-- Título -->
       <n-typography>
         <n-h1 class="title-text">
           {{ t('pages.home.title') }}
         </n-h1>
       </n-typography>
       
-      <!-- Descrição -->
       <n-typography>
         <n-text class="description-text">
           Remova o fundo de suas imagens de forma fácil e rápida. Basta fazer o
@@ -27,7 +23,6 @@
         </n-text>
       </n-typography>
       
-      <!-- Input de Drag and Drop para Upload -->
       <n-space class="uploader-container">
         <n-upload
           :multiple="false"
@@ -64,7 +59,6 @@
       
     </n-space>
 
-    <!-- Imagem de Exemplo -->
     <n-spin :show="isLoading">
       <n-space class="result-content">
         <n-image
@@ -84,7 +78,6 @@
     
   </n-space>
 
-  <!-- Gestão de Personalizações -->
   <n-space class="list-container" justify="center" align="center" size="large" vertical>
     
     <n-space vertical>
@@ -148,7 +141,6 @@
     
   </n-space>
 
-  <!-- Modal de Personalização -->
   <n-modal 
     v-model:show="showCustomizationModal" 
     title="Detalhes da Personalização"
