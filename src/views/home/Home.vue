@@ -297,6 +297,28 @@ const downloadSelectedCustomizations = async () => {
   }
 };
 
+const handlePasteUpload = async (event) => {
+  const items = event.clipboardData?.items;
+  if (items) {
+    for (const item of items) {
+      if (item.type.startsWith("image")) {
+        const file = item.getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            previewImageUrlRef.value = reader.result;
+          };
+          reader.readAsDataURL(file);
+          await handleUploadChange({ fileList: [{ file }] });
+          break;
+        }
+      }
+    }
+  } else {
+    showToast("Erro ao colar a imagem. Tente novamente.", "error");
+  }	
+};
+
 const handleUploadChange = async ({ fileList }) => {
   if (!fileList.length) {
     previewImageUrlRef.value = "";
@@ -391,6 +413,8 @@ const turnOnVM = async () => {
 };
 
 onMounted(async () => {
+  window.addEventListener("paste", handlePasteUpload);
+
   await turnOnVM();
   await fetchCustomizations();
 });
