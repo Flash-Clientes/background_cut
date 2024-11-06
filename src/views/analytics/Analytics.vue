@@ -9,6 +9,13 @@
             />
             
             <n-layout-content class="main">
+                <HeaderMenu 
+                v-if="!isMobile"
+                :initial-locale="locale"
+                :user="currentUser"
+                :theme="theme?.name"
+                />
+                
                 <router-view :locale="locale" />
             </n-layout-content>
         </n-layout>
@@ -22,6 +29,7 @@ import { useRoute } from 'vue-router';
 import { darkTheme } from 'naive-ui';
 
 import SidebarMenu from './components/sidebar-menu/SidebarMenu.vue';
+import HeaderMenu from './components/header-menu/HeaderMenu.vue';
 
 const isMobile = computed(() => window.innerWidth < 768)
 
@@ -77,6 +85,7 @@ const hideSidebar = computed(() => route.meta.hideSidebar);
 
 const currentUser = {
     name: 'John Doe',
+    email: 'john@flashvolve.com',
     status: 'admin',
 };
 
