@@ -57,12 +57,12 @@ const props = defineProps({
 const isCollapsed = ref(false);
 const logos = {
     large: {
-        dark: 'https://res.cloudinary.com/flashvolve/image/upload/v1727462096/clientes/F/Flashvolve/fvcedk4wwagpvxwkd3p2.svg', 
-        light: 'https://flashvolve.com/images/Logo-growth_baixa.svg',
+        dark: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown', 
+        light: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown',
     },
     small: {
-        dark: 'https://storage.googleapis.com/flashvolve/live-tt/output_image.png', 
-        light: 'https://storage.googleapis.com/flashvolve/live-tt/output_image.png',
+        dark: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893508/Y2xpZW50ZXMvTC9MSVZFL2I0MTBjMWY5LTllOWQtNDZmNy1hOWE1LWM4OTVhYzE4ODdhYg==/drilldown', 
+        light: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893508/Y2xpZW50ZXMvTC9MSVZFL2I0MTBjMWY5LTllOWQtNDZmNy1hOWE1LWM4OTVhYzE4ODdhYg==/drilldown',
     },
 };
 
