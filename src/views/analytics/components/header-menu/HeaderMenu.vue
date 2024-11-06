@@ -29,7 +29,7 @@
                 <i class="fa fa-bars"></i>
             </n-button>
 
-            <div class="profile-conetnt" v-if="props.user">
+            <div class="profile-content" v-if="props.user">
                 <n-space align="center">
                     <n-avatar size="large" @click="router.push({ name: 'Settings' })">
                         {{ props.user.email.charAt(0).toUpperCase() }}
@@ -86,8 +86,8 @@ const props = defineProps({
 
 const showMobileDrawer = ref(false);
 const logos = {
-    dark: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown', 
-    light: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown',
+    dark: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/PRODUTOS/svi9sxwyjlje7wjvtccv',
+    light: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/ziz4hyjsy57depckyykq',
 };
 
 const currentLogo = computed(() => {
@@ -226,7 +226,10 @@ const handleLogout = () => {
         display: block;
         width: 60%;
         height: 60%;
-        margin-bottom: 12px;
+    }
+
+    .logo {
+        width: 100%;
     }
 }
 </style>
