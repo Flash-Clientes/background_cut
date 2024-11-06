@@ -57,12 +57,12 @@ const props = defineProps({
 const isCollapsed = ref(false);
 const logos = {
     large: {
-        dark: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown', 
-        light: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893371/Y2xpZW50ZXMvTC9MSVZFL2ZhYWRiZmFhLTgzOWQtNGY1YS1hOGFiLTgxZDhiMzFhMjBkYw==/drilldown',
+        dark: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/PRODUTOS/svi9sxwyjlje7wjvtccv',
+        light: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/ziz4hyjsy57depckyykq',
     },
     small: {
-        dark: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893508/Y2xpZW50ZXMvTC9MSVZFL2I0MTBjMWY5LTllOWQtNDZmNy1hOWE1LWM4OTVhYzE4ODdhYg==/drilldown', 
-        light: 'https://res-console.cloudinary.com/flashvolve/thumbnails/v1/image/upload/v1730893508/Y2xpZW50ZXMvTC9MSVZFL2I0MTBjMWY5LTllOWQtNDZmNy1hOWE1LWM4OTVhYzE4ODdhYg==/drilldown',
+        dark: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/zivzmxlzzwbzufkpxf0s',
+        light: 'https://res.cloudinary.com/flashvolve/image/upload/f_auto,q_auto/v1/clientes/L/LIVE/zivzmxlzzwbzufkpxf0s',
     },
 };
 
