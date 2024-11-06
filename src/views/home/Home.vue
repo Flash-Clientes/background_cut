@@ -62,6 +62,7 @@
     <n-spin :show="isLoading">
       <n-space class="result-content">
         <n-image
+          class="resulted-image"
           :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
           alt="Imagem sem fundo"
           width="400"
@@ -132,9 +133,6 @@
             width="200"
             @click="openCustomizationModal(customization)"
           />
-          <n-text class="label">Campanha: {{ customization.campanha }}</n-text>
-          <n-text class="label">Telefone: {{ customization.whatsapp }}</n-text>
-          <n-text class="label">Empresa: {{ 'Americanas' }}</n-text>
         </n-space>
       </n-card>
     </n-space>
@@ -480,6 +478,15 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
+.resulted-image {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .n-upload-dragger {
   border: none;
 }
@@ -504,13 +511,11 @@ onMounted(async () => {
 }
 
 .customization-card {
-  width: 260px;
-  height: 430px;
+  width: 300px;
+  height: 300px;
   padding: 16px;
   text-align: center;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border: none;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -534,19 +539,13 @@ onMounted(async () => {
 }
 
 .image {
-  height: 200px;
+  height: 220px;
   object-fit: contain;
   margin: 10px 0;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-}
-
-.label {
-  font-weight: 600;
-  color: #4b4b4b;
-  margin-top: 8px;
 }
 
 @media (max-width: 768px) {
