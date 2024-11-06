@@ -1,163 +1,165 @@
 <template>
-  <n-space class="main-container" justify="space-between" align="center" size="large">
-    
-    <n-space class="interation-content">
+  <n-space class="home-container">
+
+    <n-space class="main-container" justify="space-between" align="center" size="large">
       
-      <n-avatar 
-        class="logo"
-        size="120"
-        src="https://flashvolve.com/images/logo_automacao_criativa.svg"
-        alt="Logo Automação Criativa"
-      />
-      
-      <n-typography>
-        <n-h1 class="title-text">
-          {{ t('pages.home.title') }}
-        </n-h1>
-      </n-typography>
-      
-      <n-typography>
-        <n-text class="description-text">
-          Remova o fundo de suas imagens de forma fácil e rápida. Basta fazer o
-          upload da sua imagem abaixo.
-        </n-text>
-      </n-typography>
-      
-      <n-space class="uploader-container">
-        <n-upload
-          :multiple="false"
-          :directory-dnd="true"
-          :show-upload-list="false"
-          @change="handleUploadChange"
-          accept="image/*"
-        >
-          <n-upload-dragger v-if="!previewImageUrlRef">
-            <div>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24">
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
-                  <path 
-                    stroke-linejoin="round" 
-                    d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
-                  />
-                  <path stroke-miterlimit="10" d="M12 12v5" />
-                  <path 
-                    stroke-linejoin="round" 
-                    d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
-                  />
-                </g>
-              </svg>
-            </div>
-            <n-text style="font-size: 16px">
-              Clique ou arraste e solte a imagem aqui para fazer o upload.
-            </n-text>
-          </n-upload-dragger>
-          <n-card v-else class="uploaded-image">
-            <img :src="previewImageUrlRef" alt="Imagem sem fundo" style="width: 100%" />
-          </n-card>
-        </n-upload>
+      <n-space class="interation-content">
+        
+        <n-avatar 
+          class="logo"
+          size="120"
+          src="https://flashvolve.com/images/logo_automacao_criativa.svg"
+          alt="Logo Automação Criativa"
+        />
+        
+        <n-typography>
+          <n-h1 class="title-text">
+            {{ t('pages.home.title') }}
+          </n-h1>
+        </n-typography>
+        
+        <n-typography>
+          <n-text class="description-text">
+            Remova o fundo de suas imagens de forma fácil e rápida. Basta fazer o
+            upload da sua imagem abaixo.
+          </n-text>
+        </n-typography>
+        
+        <n-space class="uploader-container">
+          <n-upload
+            :multiple="false"
+            :directory-dnd="true"
+            :show-upload-list="false"
+            @change="handleUploadChange"
+            accept="image/*"
+          >
+            <n-upload-dragger v-if="!previewImageUrlRef">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24">
+                  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                    <path 
+                      stroke-linejoin="round" 
+                      d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
+                    />
+                    <path stroke-miterlimit="10" d="M12 12v5" />
+                    <path 
+                      stroke-linejoin="round" 
+                      d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
+                    />
+                  </g>
+                </svg>
+              </div>
+              <n-text style="font-size: 16px">
+                Clique ou arraste e solte a imagem aqui para fazer o upload.
+              </n-text>
+            </n-upload-dragger>
+            <n-card v-else class="uploaded-image">
+              <img :src="previewImageUrlRef" alt="Imagem sem fundo" style="width: 100%" />
+            </n-card>
+          </n-upload>
+        </n-space>
+        
       </n-space>
+  
+      <n-spin :show="isLoading">
+        <n-space class="result-content">
+          <n-image
+            class="resulted-image"
+            :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
+            alt="Imagem sem fundo"
+            width="400"
+          />
+          <n-button
+            v-if="resultImageUrlRef"
+            style="color: #000000"
+            @click="downloadImage"
+          >
+            Download
+          </n-button>
+        </n-space>
+      </n-spin>
       
     </n-space>
-
-    <n-spin :show="isLoading">
-      <n-space class="result-content">
-        <n-image
-          class="resulted-image"
-          :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
-          alt="Imagem sem fundo"
-          width="400"
-        />
-        <n-button
-          v-if="resultImageUrlRef"
-          style="color: #000000"
-          @click="downloadImage"
-        >
-          Download
-        </n-button>
-      </n-space>
-    </n-spin>
-    
-  </n-space>
-
-  <n-space class="list-container" justify="center" align="center" size="large" vertical>
-    
-    <n-space vertical>
-      <n-typography>
-        <n-h1 class="title-text">Personalizações Anteriores</n-h1>
-      </n-typography>
+  
+    <n-space class="list-container" justify="center" align="center" size="large" vertical>
       
-      <n-space class="action-content" align="flex-start" justify="space-between">
-        <n-space>
-          <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
-          <n-text>Selecionar Todas</n-text>
-        </n-space>
-
-        <n-button 
-          type="error" 
-          @click="deleteSelectedCustomizations" 
+      <n-space vertical>
+        <n-typography>
+          <n-h1 class="title-text">Personalizações Anteriores</n-h1>
+        </n-typography>
+        
+        <n-space class="action-content" align="flex-start" justify="space-between">
+          <n-space>
+            <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
+            <n-text>Selecionar Todas</n-text>
+          </n-space>
+  
+          <n-button 
+            type="error" 
+            @click="deleteSelectedCustomizations" 
+            :disabled="!selectedCustomizations.length"
+            >
+            <i class="fa fa-trash"></i>
+          </n-button>
+  
+          <n-button 
+          type="primary"
+          @click="downloadSelectedCustomizations"
           :disabled="!selectedCustomizations.length"
           >
-          <i class="fa fa-trash"></i>
-        </n-button>
-
-        <n-button 
-        type="primary"
-        @click="downloadSelectedCustomizations"
-        :disabled="!selectedCustomizations.length"
+            <i class="fa fa-download"></i>
+          </n-button>
+        </n-space>
+        
+        <n-empty v-if="!fetchedCustomizations?.length" description="Nenhuma personalização encontrada." />
+        
+      </n-space>
+    
+      <n-space class="customizations-container" align="start" v-if="fetchedCustomizations">
+        <n-card
+          v-for="(customization, index) in fetchedCustomizations"
+          :key="index"
+          class="customization-card"
+          bordered
         >
-          <i class="fa fa-download"></i>
-        </n-button>
+          <n-checkbox 
+            :checked="selectedCustomizations.includes(customization.id)"
+            @click="toggleCustomizationSelection(customization.id)"
+            class="customization-checkbox"
+          />
+          <n-space class="customization-content" vertical size="small">
+            <img 
+              :src="customization.imagem_personalizada" 
+              alt="Imagem do Usuário"
+              class="image"
+              width="200"
+              @click="openCustomizationModal(customization)"
+            />
+          </n-space>
+        </n-card>
       </n-space>
       
-      <n-empty v-if="!fetchedCustomizations?.length" description="Nenhuma personalização encontrada." />
-      
     </n-space>
   
-    <n-space class="customizations-container" align="start" v-if="fetchedCustomizations">
-      <n-card
-        v-for="(customization, index) in fetchedCustomizations"
-        :key="index"
-        class="customization-card"
-        bordered
-      >
-        <n-checkbox 
-          :checked="selectedCustomizations.includes(customization.id)"
-          @click="toggleCustomizationSelection(customization.id)"
-          class="customization-checkbox"
+    <n-modal 
+      v-model:show="showCustomizationModal" 
+      title="Detalhes da Personalização"
+      preset="dialog"
+      style="width: 50%; text-align: center;"
+      :negative-text="'Fechar'"
+      @negative-click="() => showCustomizationModal = false"
+      @close="showCustomizationModal = false"
+    >
+      <n-space vertical>
+        <img
+          :src="customizationModalData?.imagem_usuario"
+          alt="Imagem do Usuário"
+          width="200"
+          style="margin-top: 16px;"
         />
-        <n-space class="customization-content" vertical size="small">
-          <img 
-            :src="customization.imagem_personalizada" 
-            alt="Imagem do Usuário"
-            class="image"
-            width="200"
-            @click="openCustomizationModal(customization)"
-          />
-        </n-space>
-      </n-card>
-    </n-space>
-    
+      </n-space>
+    </n-modal>
   </n-space>
-
-  <n-modal 
-    v-model:show="showCustomizationModal" 
-    title="Detalhes da Personalização"
-    preset="dialog"
-    style="width: 50%; text-align: center;"
-    :negative-text="'Fechar'"
-    @negative-click="() => showCustomizationModal = false"
-    @close="showCustomizationModal = false"
-  >
-    <n-space vertical>
-      <img
-        :src="customizationModalData?.imagem_usuario"
-        alt="Imagem do Usuário"
-        width="200"
-        style="margin-top: 16px;"
-      />
-    </n-space>
-  </n-modal>
-  
 </template>
 
 <script setup>
@@ -411,11 +413,16 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.home-container {
+  margin: 50px auto;
+  max-width: 1100px;
+  background-color: #ffffff;
+}
+
 .main-container {
   flex-flow: nowrap !important;
   margin: 32px;
   padding: 16px;
-  background-color: #ffffff;
 }
 
 .list-container {

@@ -28,13 +28,8 @@ const themeOverrides = ref({
   font-family: 'Rubik', sans-serif;
 }
 
-body {
+.n-layout-scroll-container {
   background-color: #f0f2f5;
-}
-
-.main {
-  max-width: 1100px;
-  margin: 50px auto;
 }
 
 ::-webkit-scrollbar {
