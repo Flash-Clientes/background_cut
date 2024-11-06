@@ -25,7 +25,7 @@
                 </n-dropdown>
             </div>
 
-            <n-button circle size="large" class="hamburguer-button" @click="showMobileMenuDrawer = true">
+            <n-button circle size="large" class="hamburguer-button" @click="showMobileDrawer = true">
                 <i class="fa fa-bars"></i>
             </n-button>
 
@@ -51,10 +51,20 @@
             </div>
         </div>
 
-        <!-- 
-            MobileMenu Here 
-            ...    
-        -->
+        <MobileMenu 
+        v-model:show="showMobileDrawer"
+        :languageOptions="languageOptions"
+        :themeOptions="themeOptions"
+        :currentFlagUrl="currentFlagUrl"
+        :currentLanguageLabel="currentLanguageLabel"
+        :currentThemeIcon="currentThemeIcon"
+        :currentThemeLabel="currentThemeLabel"
+        :user="props.user"
+        @close="handleCloseMobileMenu"
+        @changeLanguage="changeLanguage"
+        @changeTheme="changeTheme"
+        @logout="handleLogout"
+        />
     </n-layout-header>
 </template>
 
@@ -63,6 +73,8 @@ import { h, computed, ref } from 'vue';
 import { darkTheme } from 'naive-ui';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+
+import MobileMenu from './components/mobile-menu/MobileMenu.vue';
 
 const { t, locale } = useI18n();
 
@@ -163,8 +175,6 @@ const handleCloseMobileMenu = () => showMobileDrawer.value = false;
 const handleLogout = () => {
     console.log('Logout');
 };
-
-
 </script>
 
 <style scoped>
