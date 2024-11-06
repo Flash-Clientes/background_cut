@@ -16,6 +16,11 @@ const routes = [
         component: () => import('../views/analytics/views/dashboard/Dashboard.vue'),
         name: 'Dashboard',
       },
+      {
+        path: '/uploader',
+        component: () => import('../views/analytics/views/uploader/Uploader.vue'),
+        name: 'Dashboard',
+      },
     ]
   },
   {
