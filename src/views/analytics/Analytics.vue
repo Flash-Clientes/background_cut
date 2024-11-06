@@ -14,6 +14,8 @@
                 :initial-locale="locale"
                 :user="currentUser"
                 :theme="theme?.name"
+                @updateTheme="updateTheme"
+                @updateLanguage="changeLanguage"
                 />
                 
                 <router-view :locale="locale" />
