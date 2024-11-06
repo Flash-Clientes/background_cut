@@ -98,14 +98,6 @@ const changeLanguage = (lang) => {
 </script>
 
 <style scoped>
-.n-layout-sider .n-layout-toggle-button {
-    top: 5% !important;
-}
-
-.n-layout-sider-scroll-container {
-    overflow: hidden !important;
-}
-
 .n-layout-scroll-container {
     overflow-y: hidden;
 }
