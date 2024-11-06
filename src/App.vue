@@ -28,6 +28,14 @@ const themeOverrides = ref({
   font-family: 'Rubik', sans-serif;
 }
 
+.n-layout-sider .n-layout-toggle-button {
+  top: 5% !important;
+}
+
+.n-layout-sider-scroll-container {
+  overflow: hidden !important;
+}
+
 .n-layout-scroll-container {
   background-color: #f0f2f5;
 }
