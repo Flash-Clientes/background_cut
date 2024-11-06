@@ -75,6 +75,11 @@ const theme = ref(null);
 const route = useRoute();
 const hideSidebar = computed(() => route.meta.hideSidebar);
 
+const currentUser = {
+    name: 'John Doe',
+    status: 'admin',
+};
+
 onMounted(() => {
     locale.value = detectedLocale || 'pt';
 });
