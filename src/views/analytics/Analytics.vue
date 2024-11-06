@@ -10,7 +10,6 @@
             
             <n-layout-content class="main">
                 <HeaderMenu 
-                v-if="isMobile"
                 :initial-locale="locale"
                 :user="currentUser"
                 :theme="theme?.name"
