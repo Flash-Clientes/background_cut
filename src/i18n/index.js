@@ -1,9 +1,9 @@
 import { createI18n } from 'vue-i18n';
 import loadLocaleMessages from './locales';
 
-const { pt } = await loadLocaleMessages();
+const { en, pt } = await loadLocaleMessages();
 
-const messages = { pt: pt };
+const messages = { en: en, pt: pt };
 
 const i18n = createI18n({
     legacy: false,
