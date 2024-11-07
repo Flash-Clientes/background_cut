@@ -7,6 +7,28 @@ const routes = [
     component: () => import('../views/home/Home.vue'),
   },
   {
+    path: '/dashboard',
+    component: () => import('../views/analytics/Analytics.vue'),
+    name: 'Analytics',
+    children: [
+      {
+        path: '',
+        component: () => import('../views/analytics/views/dashboard/Dashboard.vue'),
+        name: 'Dashboard',
+      },
+      {
+        path: '/uploader',
+        component: () => import('../views/analytics/views/uploader/Uploader.vue'),
+        name: 'Uploader',
+      },
+      {
+        path: '/history',
+        component: () => import('../views/analytics/views/history/History.vue'),
+        name: 'History',
+      },
+    ]
+  },
+  {
     path: '/customizations',
     name: 'Customizations',
     component: () => import('../modules/customizations/list-customizations/ListCustomizations.vue'),

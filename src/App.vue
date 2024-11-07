@@ -28,13 +28,12 @@ const themeOverrides = ref({
   font-family: 'Rubik', sans-serif;
 }
 
-body {
-  background-color: #f0f2f5;
+.n-layout-sider .n-layout-toggle-button {
+  top: 5% !important;
 }
 
-.main {
-  max-width: 900px;
-  margin: 50px auto;
+.n-layout-sider-scroll-container {
+  overflow: hidden !important;
 }
 
 ::-webkit-scrollbar {
@@ -48,5 +47,9 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(150, 136, 242, 0.8);
+}
+
+.n-upload-trigger + .n-upload-file-list {
+  margin-top: 0 !important;
 }
 </style>

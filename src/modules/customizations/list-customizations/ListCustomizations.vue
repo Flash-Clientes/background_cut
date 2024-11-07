@@ -23,7 +23,7 @@
         
         <n-button type="error" class="delete-button" @click="deleteSelectedCustomizations" :disabled="!selectedCustomizations.length">
             <i class="fa fa-trash"></i>
-        </n-button>
+        </n-button> 
 
         <n-space class="customizations-container" align="start" v-if="filteredCustomizations">
             <n-card
