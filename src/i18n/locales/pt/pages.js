@@ -29,5 +29,21 @@ export default {
             size: 'A imagem deve ser menor que 12MB.',
             process: 'Erro ao processar a imagem! Por favor, tente novamente.',
         },
+    },
+
+    history: {
+        title: 'Historico de Personalizações',
+        select_all: 'Selecionar Todas',
+        no_customizations_found: 'Nenhuma personalização encontrada.',
+        deatils: 'Detalhes da personalização',
+
+        success: {
+            customizations_downloaded: 'Personalizações baixadas com sucesso!',
+        },
+
+        erros: {
+            not_selected: 'Nenhuma personalização selecionada.',
+            download_customizations: 'Erro ao baixar personalizações.',
+        },
     }
 };

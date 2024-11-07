@@ -29,5 +29,21 @@ export default {
             size: 'The image must be smaller than 12MB.',
             process: 'Error processing image! Please try again.',
         }
+    },
+
+    history: {
+        title: 'Customization History',
+        select_all: 'Select All',
+        no_customizations_found: 'No customizations found.',
+        details: 'Details of the customization',
+
+        success: {
+            customizations_downloaded: 'Customizations downloaded successfully!',
+        },
+
+        errors: {
+            not_selected: 'No customization selected.',
+            download_customizations: 'Error downloading customizations.',
+        },
     }
 };
