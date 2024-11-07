@@ -3,75 +3,68 @@
 
         <n-space class="main-container" justify="space-between" align="center" size="large">
         
-            <n-space class="interation-content">
+          <n-space class="interation-content">
                 
-                <n-typography>
-                <n-h1 class="title-text">
-                    {{ t('pages.home.title') }}
-                </n-h1>
-                </n-typography>
-                
-                <n-typography>
-                <n-text class="description-text">
-                    Remova o fundo de suas imagens de forma fácil e rápida. Basta fazer o
-                    upload da sua imagem abaixo.
-                </n-text>
-                </n-typography>
-                
-                <n-space class="uploader-container">
-                <n-upload
-                    :multiple="false"
-                    :directory-dnd="true"
-                    :show-upload-list="false"
-                    @change="handleUploadChange"
-                    accept="image/*"
-                >
-                    <n-upload-dragger v-if="!previewImageUrlRef">
+            <n-typography>
+              <n-h1 class="title-text"> {{ t('pages.uploader.title') }} </n-h1>
+            </n-typography>
+            
+            <n-typography  ypography>
+              <n-text class="description-text"> {{ t('pages.uploader.description') }} </n-text>
+            </n-typography>
+            
+            <n-space class="uploader-container">
+              <n-upload
+              :multiple="false"
+              :directory-dnd="true"
+              :show-upload-list="false"
+              @change="handleUploadChange"
+              accept="image/*"
+              >
+                  <n-upload-dragger v-if="!previewImageUrlRef">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
-                            <path 
-                            stroke-linejoin="round" 
-                            d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
-                            />
-                            <path stroke-miterlimit="10" d="M12 12v5" />
-                            <path 
-                            stroke-linejoin="round" 
-                            d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
-                            />
-                        </g>
-                        </svg>
+                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                              <path 
+                              stroke-linejoin="round" 
+                              d="M4.382 8.813v8.5c0 .845.344 1.656.957 2.253a3.3 3.3 0 0 0 2.308.934h8.706c.866 0 1.696-.336 2.308-.934a3.15 3.15 0 0 0 .957-2.253v-8.5m0-5.313H4.382c-.901 0-1.632.714-1.632 1.594v2.125c0 .88.73 1.593 1.632 1.593h15.236c.901 0 1.632-.713 1.632-1.593V5.094c0-.88-.73-1.594-1.632-1.594"
+                              />
+                              <path stroke-miterlimit="10" d="M12 12v5" />
+                              <path 
+                              stroke-linejoin="round" 
+                              d="m14.293 14.105l-1.967-1.967a.46.46 0 0 0-.652 0l-1.967 1.967"
+                              />
+                          </g>
+                          </svg>
                     </div>
-                    <n-text style="font-size: 16px">
-                        Clique ou arraste e solte a imagem aqui para fazer o upload.
-                    </n-text>
-                    </n-upload-dragger>
-                    <n-card v-else class="uploaded-image">
+                    <n-text style="font-size: 16px"> {{ t('pages.uploader.upload') }} </n-text>
+                  </n-upload-dragger>
+                  
+                  <n-card v-else class="uploaded-image">
                     <img :src="previewImageUrlRef" alt="Imagem sem fundo" style="width: 100%" />
-                    </n-card>
-                </n-upload>
-                </n-space>
-                
+                  </n-card>
+              </n-upload>
             </n-space>
+                
+          </n-space>
 
             <n-spin :show="isLoading">
-                <n-space class="result-content">
+              <n-space class="result-content">
                 <n-image
-                    class="resulted-image"
-                    :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
-                    alt="Imagem sem fundo"
-                    width="400"
+                class="resulted-image"
+                :src="resultImageUrlRef || 'https://res.cloudinary.com/prime-arte/image/upload/v1729012179/santander/yoovdchflputukmowums.png'"
+                alt="Imagem sem fundo"
+                width="400"
                 />
-                <n-button
-                    v-if="resultImageUrlRef"
-                    @click="downloadImage"
-                >
-                    Download
+                
+                <n-button v-if="resultImageUrlRef" @click="downloadImage"> 
+                  {{ t('pages.uploader.download') }}  
                 </n-button>
-                </n-space>
+              </n-space>
             </n-spin>
         
         </n-space>
+        
     </n-card>
 </template>
 
