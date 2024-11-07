@@ -12,30 +12,32 @@
             <n-text> {{ t('pages.history.select_all') }} </n-text>
           </n-space>
   
-          <n-button 
-          type="error" 
-          @click="deleteSelectedCustomizations" 
-          :disabled="!selectedCustomizations.length"
-          >
-            <i class="fa fa-trash"></i>
-          </n-button>
-  
-          <n-button 
-          type="info"
-          @click="downloadSelectedCustomizations"
-          :disabled="!selectedCustomizations.length"
-          >
-            <i class="fa fa-download"></i>
-          </n-button>
+          <n-space>
+            <n-button 
+            type="error" 
+            @click="deleteSelectedCustomizations" 
+            :disabled="!selectedCustomizations.length"
+            >
+                <i class="fa fa-trash"></i>
+            </n-button>
+    
+            <n-button 
+            type="info"
+            @click="downloadSelectedCustomizations"
+            :disabled="!selectedCustomizations.length"
+            >
+                <i class="fa fa-download"></i>
+            </n-button>
+          </n-space>
         </n-space>
         
-        <n-empty v-if="!fetchedCustomizations?.length" :description="t('pages.history.no_customizations_found')" />
+        <n-empty v-if="!paginatedCustomizations?.length" :description="t('pages.history.no_customizations_found')" />
         
       </n-space>
     
-      <n-space class="customizations-container" align="start" v-if="fetchedCustomizations">
+      <n-space class="customizations-container" align="start" v-if="paginatedCustomizations">
         <n-card
-          v-for="(customization, index) in fetchedCustomizations"
+          v-for="(customization, index) in paginatedCustomizations"
           :key="index"
           class="customization-card"
           bordered
@@ -57,6 +59,12 @@
         </n-card>
       </n-space>
       
+      <Pagination 
+        :currentPage="currentPage"
+        :pageSize="pageSize"
+        :totalPages="totalCustomizations"
+        @pageChange="handlePageChange"
+        />    
     </n-space>
   
     <n-modal 
@@ -94,6 +102,25 @@ const { fetchedCustomizations, fetchCustomizations } = useListCustomizations()
 
 import useRemoveCustomization from './hooks/useRemoveCustomization'
 const { removeCustomization } = useRemoveCustomization()
+
+import Pagination from './components/pagination/Pagination.vue';
+
+const currentPage = ref(1);
+const pageSize = ref(12);
+const totalCustomizations = computed(() => fetchedCustomizations.value.length);
+
+const paginatedCustomizations = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return fetchedCustomizations.value.slice(start, end);
+});
+
+const handlePageChange = async (page, size) => {
+    currentPage.value = page;
+    pageSize.value = size;
+
+    paginatedCustomizations.value = fetchedCustomizations.value.slice((page - 1) * size, page * size);    
+};
 
 const showCustomizationModal = ref(false);
 const customizationModalData = ref(null);
@@ -196,7 +223,6 @@ onMounted(async () => {
     await fetchCustomizations();
 });
 </script>
-
 
 <style scoped>
 .list-container {
