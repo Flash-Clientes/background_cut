@@ -19,7 +19,12 @@ const routes = [
       {
         path: '/uploader',
         component: () => import('../views/analytics/views/uploader/Uploader.vue'),
-        name: 'Dashboard',
+        name: 'Uploader',
+      },
+      {
+        path: '/history',
+        component: () => import('../views/analytics/views/history/History.vue'),
+        name: 'History',
       },
     ]
   },
