@@ -3,25 +3,25 @@
       
       <n-space vertical>
         <n-typography>
-          <n-h1 class="title-text">Personalizações Anteriores</n-h1>
+          <n-h1 class="title-text"> {{ t('pages.history.title') }} </n-h1>
         </n-typography>
         
         <n-space class="action-content" align="flex-start" justify="space-between">
           <n-space>
             <n-checkbox :checked="isAllSelected" @change="toggleSelectAll" />
-            <n-text>Selecionar Todas</n-text>
+            <n-text> {{ t('pages.history.select_all') }} </n-text>
           </n-space>
   
           <n-button 
-            type="error" 
-            @click="deleteSelectedCustomizations" 
-            :disabled="!selectedCustomizations.length"
-            >
+          type="error" 
+          @click="deleteSelectedCustomizations" 
+          :disabled="!selectedCustomizations.length"
+          >
             <i class="fa fa-trash"></i>
           </n-button>
   
           <n-button 
-          type="primary"
+          type="info"
           @click="downloadSelectedCustomizations"
           :disabled="!selectedCustomizations.length"
           >
@@ -29,7 +29,7 @@
           </n-button>
         </n-space>
         
-        <n-empty v-if="!fetchedCustomizations?.length" description="Nenhuma personalização encontrada." />
+        <n-empty v-if="!fetchedCustomizations?.length" :description="t('pages.history.no_customizations_found')" />
         
       </n-space>
     
@@ -61,7 +61,7 @@
   
     <n-modal 
       v-model:show="showCustomizationModal" 
-      title="Detalhes da Personalização"
+      :title="t('pages.history.details')"
       preset="dialog"
       style="width: 50%; text-align: center;"
       :negative-text="'Fechar'"
@@ -81,8 +81,11 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { toast } from "vue3-toastify";
 
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
+import { toast } from "vue3-toastify";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
@@ -135,7 +138,7 @@ const deleteSelectedCustomizations = () => {
 
 const downloadSelectedCustomizations = async () => {
   if (!selectedCustomizations.value.length) {
-    showToast("Nenhuma customização selecionada para download.", "error");
+    showToast(t('pages.history.errors.not_selected'), "error");
     return;
   }
 
@@ -171,10 +174,10 @@ const downloadSelectedCustomizations = async () => {
       }
     }
 
-    showToast("Imagens das customizações selecionadas baixadas com sucesso!");
+    showToast(t('pages.history.success.customizations_downloaded'), "success");
   } catch (error) {
-    console.error("Erro ao baixar as customizações:", error);
-    showToast("Erro ao baixar as customizações. Tente novamente.", "error");
+    console.error(t('pages.history.errors.download_customizations'), error);
+    showToast(t('pages.history.errors.download_customizations'), "error");
   }
 };
 
