@@ -64,7 +64,7 @@
             </n-spin>
         
         </n-space>
-        
+
     </n-card>
 </template>
 
@@ -108,6 +108,8 @@ const handlePasteUpload = async (event) => {
   if (items) {
     for (const item of items) {
       if (item.type.startsWith("image")) {
+        showToast(t('pages.uploader.success.paste'));
+
         const file = item.getAsFile();
         if (file) {
           const reader = new FileReader();
@@ -121,7 +123,7 @@ const handlePasteUpload = async (event) => {
       }
     }
   } else {
-    showToast("Erro ao colar a imagem. Tente novamente.", "error");
+    showToast(t('pages.uploader.errors.paste'), "error");
   }	
 };
 
@@ -134,13 +136,13 @@ const handleUploadChange = async ({ fileList }) => {
   const file = fileList[0]?.file;
   if (!file) {
     previewImageUrlRef.value = "";
-    showToast("Erro ao carregar a imagem. Tente novamente.", "error");
+    showToast(t('pages.uploader.errors.upload'), "error");
     return;
   }
 
   const fileSize = file.size / 1024 / 1024;
   if (fileSize > 12) {
-    showToast("O tamanho da imagem não pode ser maior que 12MB.", "error");
+    showToast(t('pages.uploader.errors.size'), "error");
     return;
   }
 
@@ -172,11 +174,11 @@ const processImage = async (imageUrl) => {
     };
 
     await registerCustomization(customizationToRegister);
-    showToast("Imagem sem fundo gerada com sucesso!");
+    showToast(t('pages.uploader.success.process'), "success");
 
   } catch (error) {
-    console.error("Erro ao processar a imagem:", error);
-    showToast("Erro ao processar a imagem. Tente novamente.", "error");
+    console.error(t('pages.uploader.errors.process'), error);
+    showToast(t('pages.uploader.errors.process'), "error");
   }
 };
 
