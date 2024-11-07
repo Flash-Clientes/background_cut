@@ -36,6 +36,8 @@ export default {
         select_all: 'Select All',
         no_customizations_found: 'No customizations found.',
         details: 'Details of the customization',
+        per_page: 'Customizations per page',
+        showing: 'Showing {count} of {total} customizations',
 
         success: {
             customizations_downloaded: 'Customizations downloaded successfully!',

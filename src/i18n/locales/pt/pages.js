@@ -35,7 +35,9 @@ export default {
         title: 'Historico de Personalizações',
         select_all: 'Selecionar Todas',
         no_customizations_found: 'Nenhuma personalização encontrada.',
-        deatils: 'Detalhes da personalização',
+        details: 'Detalhes da personalização',
+        per_page: 'Personalizações por página',
+        showing: 'Mostrando {count} de {total} personalizações',
 
         success: {
             customizations_downloaded: 'Personalizações baixadas com sucesso!',
