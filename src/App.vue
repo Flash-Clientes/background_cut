@@ -48,4 +48,8 @@ const themeOverrides = ref({
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(150, 136, 242, 0.8);
 }
+
+.n-upload-trigger + .n-upload-file-list {
+  margin-top: 0 !important;
+}
 </style>
